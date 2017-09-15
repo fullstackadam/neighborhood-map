@@ -13,16 +13,60 @@
 	<!-- Optional theme -->
 	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">
 
-	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+	<script defer src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
 
 	<!-- Latest compiled and minified JavaScript -->
-	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+	<script defer src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
 
 	<!-- knockout -->
-	<script src="https://cdnjs.cloudflare.com/ajax/libs/knockout/3.4.1/knockout-min.js"></script>
+	<script defer src="https://cdnjs.cloudflare.com/ajax/libs/knockout/3.4.1/knockout-min.js"></script>
+
+	<script>
+		function initMap() {
+			// Create a map object and specify the DOM element for display.
+			var map = new google.maps.Map(document.getElementById('map'), {
+				center: {lat: -34.397, lng: 150.644},
+				scrollbar: false,
+				zoom: 8
+			});
+		}
+	</script>
+
+    <script defer src="http://js.api.here.com/v3/3.0/mapsjs-core.js"
+  type="text/javascript" charset="utf-8"></script>
+<script defer src="http://js.api.here.com/v3/3.0/mapsjs-service.js"
+  type="text/javascript" charset="utf-8"></script>
+  	<script defer src="http://js.api.here.com/v3/3.0/mapsjs-places.js"
+  type="text/javascript" charset="utf-8">
+  </script>
+    <script defer src="app.js"></script>
+
+	<script defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCTSB-tk-xxArawb8VU5E-72PfF-iPCvUc&libraries=places&callback=initMap"
+    onerror="alert('could not load gmaps api')"></script>
+
+	<style>
+      #map {
+      	margin-top: 50px;
+        width: 100%;
+        height: 400px;
+        background-color: grey;
+      }
+      /*#list {
+      	margin-top: 50px;
+      }*/
+
+      #list li:hover {
+      	background-color: black;
+      	color: white;
+      }
+
+      #list li {
+      	cursor: pointer;
+      }
+    </style>
 </head>
 <body>
-	<header>
+	<!--<header>
 		<div class="container">
 			<div class="row">
 		       <div id="custom-search-input">
@@ -37,61 +81,49 @@
 		        </div>
 			</div>
 		</div>
-	</header>
-	<div id="map"></div>
+	</header>-->
+	<nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+	    <div class="container">
+	        <div class="navbar-header">
+	            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+	                <span class="sr-only">Toggle navigation</span>
+	                <span class="icon-bar"></span>
+	                <span class="icon-bar"></span>
+	                <span class="icon-bar"></span>
+	            </button>
+	        </div>
+
+	        <!-- Collect the nav links, forms, and other content for toggling -->
+	        <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+	            <ul class="nav navbar-nav nav-pills">
+	                <li class="active"><a href="#">Denver, CO</a></li>
+	                <li><a href="#">New York, NY</a></li>
+	                <li><a href="#">San Francisco, CA</a></li>
+	                <li><a href="#">Manila</a></li>
+	                <li><a href="#">London</a></li>
+	            </ul>
+	            <ul class="nav nav-pills">
+	            	<li>Drug Store</li>
+	            	<li>Movies</li>
+	            </ul>
+	        </div>
+	    </div>
+	</nav>
+	<div class="row">
+		<div class="col-xs-4 col-sm-4 col-md-4 col-lg-4" style="padding-top: 50px;">
+			<select class="form-control" data-bind="options: locationCategories, selectedOptions: categoryFilter">
+
+			</select>
+			<ul id="list" data-bind="foreach: filteredLocations">
+				<li title="Click to display additional information" data-bind="event: { mouseover: $root.onMouseoverListItem, mouseout: $root.onMouseoutListItem, click: $root.onClickListItem }, text: name"></li>
+			</ul>
+		</div>
+		<div class="col-xs-8 col-sm-8 col-md-8 col-lg-8">
+			<div class="container" id="map">
+				
+			</div>
+		</div>
+	</div>
 	<footer></footer>
-	<script>
-		var APIKEY = 'AIzaSyCTSB-tk-xxArawb8VU5E-72PfF-iPCvUc';
-		function initMap() {
-			// Create a map object and specify the DOM element for display.
-			var map = new google.maps.Map(document.getElementById('map'), {
-				center: {lat: -34.397, lng: 150.644},
-				scrollwheel: false,
-				zoom: 8
-			});
-		}
-	</script>
-	<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCTSB-tk-xxArawb8VU5E-72PfF-iPCvUc&callback=initMap"
-    async defer></script>
-    <style type="text/css">
-		#custom-search-input {
-	        margin:0;
-	        margin-top: 10px;
-	        padding: 0;
-	    }
-	 
-	    #custom-search-input .search-query {
-	        padding-right: 3px;
-	        padding-right: 4px \9;
-	        padding-left: 3px;
-	        padding-left: 4px \9;
-	        /* IE7-8 doesn't have border-radius, so don't indent the padding */
-	 
-	        margin-bottom: 0;
-	        -webkit-border-radius: 3px;
-	        -moz-border-radius: 3px;
-	        border-radius: 3px;
-	    }
-	 
-	    #custom-search-input button {
-	        border: 0;
-	        background: none;
-	        /** belows styles are working good */
-	        padding: 2px 5px;
-	        margin-top: 2px;
-	        position: relative;
-	        left: -28px;
-	        /* IE7-8 doesn't have border-radius, so don't indent the padding */
-	        margin-bottom: 0;
-	        -webkit-border-radius: 3px;
-	        -moz-border-radius: 3px;
-	        border-radius: 3px;
-	        color:#D9230F;
-	    }
-	 
-	    .search-query:focus + button {
-	        z-index: 3;   
-	    }
-    </style>
 </body>
 </html>
