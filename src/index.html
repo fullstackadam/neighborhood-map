@@ -95,12 +95,9 @@
 
 	        <!-- Collect the nav links, forms, and other content for toggling -->
 	        <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
-	            <ul class="nav navbar-nav nav-pills">
-	                <li class="active"><a href="#">Denver, CO</a></li>
-	                <li><a href="#">New York, NY</a></li>
-	                <li><a href="#">San Francisco, CA</a></li>
-	                <li><a href="#">Manila</a></li>
-	                <li><a href="#">London</a></li>
+	            <ul class="nav navbar-nav nav-pills" data-bind="foreach: defaultCities">
+	                <!--<li class="active"><a href="#" city="denver" data-bind="click: onCitySelection.bind($data, $element)">Denver, CO</a></li>-->
+	                <li><a href="#" data-bind="text: name, click: $root.onCitySelection"></a></li>
 	            </ul>
 	            <ul class="nav nav-pills">
 	            	<li>Drug Store</li>

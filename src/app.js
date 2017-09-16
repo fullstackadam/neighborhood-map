@@ -1,21 +1,9 @@
 // https://developer.here.com/documentation/maps/topics_api/h-places-explore.html
 // http://places.demo.api.here.com/places/static/doc/public/#topics/categories.html
-// display dispensary details in infoWindow
 
 var map;
 
 // default city coordinates
-var defaultCities = {
-	'new-york': {lat: 40.7128, lng: -74.0059},
-	'san-francisco': {lat: 37.7749, lng: -122.4194},
-	'denver': {lat: 39.7392, lng: -104.9903},
-	'london': {lat: 51.5074, lng: -0.1278},
-	'manila': {lat: 14.5995, lng: 120.9842}
-};
-
-var defaultLocation = defaultCities.denver;
-
-var currentLocation = defaultLocation;
 
 function initMap() {
 
@@ -34,20 +22,20 @@ function initMap() {
 	}
 
 	function updateLatLng(position) {
-		currentLocation.lat = position.coords.latitude;
-		currentLocation.lng = position.coords.longitude;
+		vm.currentLocation().lat = position.coords.latitude;
+		vm.currentLocation().lng = position.coords.longitude;
 	}
 
 	function showPosition() {
 
 	    // Create a map object and specify the DOM element for display.
 		window.map = new google.maps.Map(document.getElementById('map'), {
-			center: {lat: currentLocation.lat, lng: currentLocation.lng},
+			center: {lat: vm.currentLocation().lat, lng: vm.currentLocation().lng},
 			scrollbar: false,
 			zoom: 14
 		});
 
-		octopus.getLocations(currentLocation.lat, currentLocation.lng, doAfterLocationsLoaded);
+		octopus.getLocations(vm.currentLocation().lat, vm.currentLocation().lng, doAfterLocationsLoaded);
 	}
 }
 
@@ -130,6 +118,30 @@ var octopus = {
 
 function ViewModel() {
 	var self = this;
+
+	self.defaultCities = [
+		{ name: 'new-york', position: {lat: 40.7128, lng: -74.0059} },
+		{ name: 'san-francisco', position: {lat: 37.7749, lng: -122.4194} },
+		{ name: 'denver', position: {lat: 39.7392, lng: -104.9903} },
+		{ name: 'london', position: {lat: 51.5074, lng: -0.1278} },
+		{ name: 'manila', position: {lat: 14.5995, lng: 120.9842} }
+	];
+
+	// set to Denver by default
+	self.currentLocation = ko.observable(self.defaultCities[2].position);
+
+	self.currentLocation.subscribe(function(newLocation) {
+		// wipe out markers
+		ko.utils.arrayForEach(self.locations(), function(location) {
+			location.marker.setMap(null);
+		});
+
+		self.locations([]);
+
+		map.setCenter({lat: self.currentLocation().lat, lng: self.currentLocation().lng});
+
+		octopus.getLocations(self.currentLocation().lat, self.currentLocation().lng, octopus.addMarkers);
+	});
 
 	self.categoryFilter = ko.observable(['all']);
 	self.locations = ko.observableArray([]);
@@ -237,6 +249,10 @@ function ViewModel() {
 
 		// animate marker
 		location.marker.setAnimation(google.maps.Animation.BOUNCE);
+	};
+
+	self.onCitySelection = function(city) {
+		self.currentLocation(city.position);
 	};
 }
 
