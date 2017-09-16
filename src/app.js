@@ -3,16 +3,16 @@
 
 var map;
 
-// default city coordinates
+var firstRun = true;
 
 function initMap() {
 
 	function getLocation() {
 	    if (navigator.geolocation) {
 	        navigator.geolocation.getCurrentPosition(updateLatLng);
+	    } else {
+	    	showPosition();
 	    }
-
-	    showPosition();
 	}
 
 	getLocation();
@@ -21,6 +21,8 @@ function initMap() {
 		vm.currentLocation(
 			{ lat: position.coords.latitude, lng: position.coords.longitude }
 		);
+
+		showPosition();
 	}
 
 	function showPosition() {
@@ -54,6 +56,8 @@ var octopus = {
 		});
 	},
 	getLocations: function(lat, lng, callback) {
+		firstRun = false;
+
 		// save results to hash table
 		// use here id as key
 
@@ -119,6 +123,10 @@ function ViewModel() {
 	self.currentLocation = ko.observable(self.defaultCities[2].position);
 
 	self.currentLocation.subscribe(function(newLocation) {
+		if (firstRun) {
+			return false;
+		}
+
 		// wipe out markers
 		ko.utils.arrayForEach(self.locations(), function(location) {
 			location.marker.setMap(null);
