@@ -18,15 +18,16 @@ function initMap() {
 	getLocation();
 
 	function updateLatLng(position) {
-		vm.currentLocation().lat = position.coords.latitude;
-		vm.currentLocation().lng = position.coords.longitude;
+		vm.currentLocation(
+			{ lat: position.coords.latitude, lng: position.coords.longitude }
+		);
 	}
 
 	function showPosition() {
 
 	    // Create a map object and specify the DOM element for display.
 		window.map = new google.maps.Map(document.getElementById('map'), {
-			center: {lat: vm.currentLocation().lat, lng: vm.currentLocation().lng},
+			center: { lat: vm.currentLocation().lat, lng: vm.currentLocation().lng },
 			scrollbar: false,
 			zoom: 14
 		});
@@ -38,30 +39,21 @@ function initMap() {
 var octopus = {
 	addMarkers: function() {
 		vm.locations().forEach(function(location) {
-			//console.log(location);
-			// avoid creating multiple markers for the same location
 			var lat = location.lat();
 			var lng = location.lng();
 
 			location.marker = vm.addMarker(
 				{
 					position: { 
-						lat: lat, 
+						lat: lat,
 						lng: lng
 					},
 					icon: location.icon()
 				}
 			);
-
-			//model.assignMarker(index, marker);
 		});
 	},
 	getLocations: function(lat, lng, callback) {
-		if (lat === null && lng === null) {
-			lat = currentLocation.lat;
-			lng = currentLocation.lng;
-		}
-
 		// save results to hash table
 		// use here id as key
 
@@ -186,21 +178,21 @@ function ViewModel() {
 	};
 
 	self.filteredLocations = ko.computed(function() {
-		console.log('filter computed');
-		
 		var categoryFilter = self.categoryFilter()[0];
-		
-		if (categoryFilter === 'all') {
-			return self.locations();
-		}
 
 		return ko.utils.arrayFilter(self.locations(), function(location) {
-			if (location.category() === categoryFilter) {
+			if (location.category() === categoryFilter || categoryFilter === 'all') {
 				keep = true;
-				location.marker.setVisible(true);
+				
+				if (location.marker !== undefined) {
+					location.marker.setVisible(true);
+				}
 			} else {
 				keep = false;
-				location.marker.setVisible(false);
+
+				if (location.marker !== undefined) {
+					location.marker.setVisible(false);
+				}
 			}
 
 			return keep;
@@ -210,8 +202,6 @@ function ViewModel() {
 	self.onMouseoverListItem = function(location) {
 		location.marker.defaultIcon = location.marker.icon;
 		location.marker.setIcon('/images/here2.png');
-		// save old zindex
-		// set high zindex
 	};
 
 	self.onMouseoutListItem = function(location) {
@@ -226,7 +216,7 @@ function ViewModel() {
 		}
 	};
 
-	self.onClickListItem = function(location) { 
+	self.onClickListItem = function(location) {
 		// if info window doesn't exist create and assign to location object
 		if (location.infoWindow === undefined) {
 			location.infoWindow = new google.maps.InfoWindow({
@@ -262,12 +252,6 @@ var Location = function(location) {
 	self.lat = ko.observable(location.position[0]);
 	self.lng = ko.observable(location.position[1]);
 	self.icon = ko.observable(location.icon);
-	self.visible = ko.observable(true);
-
-	self.visible.subscribe(function(newValue) {
-		console.log(self.name() + ' set visible to ' + newValue);
-		// make marker visible or invisible if exists
-	});
 
 	// if hours set save to location obj
 	if (location.openingHours !== undefined) {
