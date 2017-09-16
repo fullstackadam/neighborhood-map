@@ -17,10 +17,6 @@ function initMap() {
 
 	getLocation();
 
-	function doAfterLocationsLoaded() {
-		octopus.addMarkers();
-	}
-
 	function updateLatLng(position) {
 		vm.currentLocation().lat = position.coords.latitude;
 		vm.currentLocation().lng = position.coords.longitude;
@@ -35,7 +31,7 @@ function initMap() {
 			zoom: 14
 		});
 
-		octopus.getLocations(vm.currentLocation().lat, vm.currentLocation().lng, doAfterLocationsLoaded);
+		octopus.getLocations(vm.currentLocation().lat, vm.currentLocation().lng, octopus.addMarkers);
 	}
 }
 
@@ -120,11 +116,11 @@ function ViewModel() {
 	var self = this;
 
 	self.defaultCities = [
-		{ name: 'new-york', position: {lat: 40.7128, lng: -74.0059} },
-		{ name: 'san-francisco', position: {lat: 37.7749, lng: -122.4194} },
-		{ name: 'denver', position: {lat: 39.7392, lng: -104.9903} },
-		{ name: 'london', position: {lat: 51.5074, lng: -0.1278} },
-		{ name: 'manila', position: {lat: 14.5995, lng: 120.9842} }
+		{ name: 'New York, NY', position: {lat: 40.7128, lng: -74.0059} },
+		{ name: 'San Francisco, CA', position: {lat: 37.7749, lng: -122.4194} },
+		{ name: 'Denver, CO', position: {lat: 39.7392, lng: -104.9903} },
+		{ name: 'London, UK', position: {lat: 51.5074, lng: -0.1278} },
+		{ name: 'Manila, PH', position: {lat: 14.5995, lng: 120.9842} }
 	];
 
 	// set to Denver by default
