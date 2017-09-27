@@ -1,275 +1,321 @@
 // https://developer.here.com/documentation/maps/topics_api/h-places-explore.html
 // http://places.demo.api.here.com/places/static/doc/public/#topics/categories.html
+// conforms to the airbnb style guide
+// use 'strict';
+// https://github.com/paulmillr/es6-shim
+// onresize set map center
 
-var map;
+/**
+ * @description Represents a location
+ * @constructor
+ * @param {object} location - location properties
+ * @returns {object} location with properties set as observables
+ */
 
-var firstRun = true;
+const Location = function Location(location) {
+  const SELF = this;
+  let hours = 'N/A';
 
-function initMap() {
+  SELF.id = ko.observable(location.id);
+  SELF.name = ko.observable(location.title);
+  SELF.category = ko.observable(location.category.id);
+  SELF.lat = ko.observable(location.position[0]);
+  SELF.lng = ko.observable(location.position[1]);
+  SELF.icon = ko.observable(location.icon);
 
-	function getLocation() {
-	    if (navigator.geolocation) {
-	        navigator.geolocation.getCurrentPosition(updateLatLng);
-	    } else {
-	    	showPosition();
-	    }
-	}
+  // if hours set save to location obj
+  if (location.openingHours !== undefined) {
+    hours = location.openingHours.text;
+  }
 
-	getLocation();
-
-	function updateLatLng(position) {
-		vm.currentLocation(
-			{ lat: position.coords.latitude, lng: position.coords.longitude }
-		);
-
-		showPosition();
-	}
-
-	function showPosition() {
-
-	    // Create a map object and specify the DOM element for display.
-		window.map = new google.maps.Map(document.getElementById('map'), {
-			center: { lat: vm.currentLocation().lat, lng: vm.currentLocation().lng },
-			scrollbar: false,
-			zoom: 14
-		});
-
-		octopus.getLocations(vm.currentLocation().lat, vm.currentLocation().lng, octopus.addMarkers);
-	}
-}
-
-var octopus = {
-	addMarkers: function() {
-		vm.locations().forEach(function(location) {
-			var lat = location.lat();
-			var lng = location.lng();
-
-			location.marker = vm.addMarker(
-				{
-					position: { 
-						lat: lat,
-						lng: lng
-					},
-					icon: location.icon()
-				}
-			);
-		});
-	},
-	getLocations: function(lat, lng, callback) {
-		firstRun = false;
-
-		// save results to hash table
-		// use here id as key
-
-		var platform = new H.service.Platform({
-		  'app_id': 'JaSjic2QLCII4hn6wa2V',
-		  'app_code': '-9DtJ2wENRacgkqeW0haBg'
-		});
-
-		// Obtain an Explore object through which to submit search
-		// requests:
-		var search = new H.places.Explore(platform.getPlacesService()),
-		  searchResult, error;
-
-		// Define search parameters:
-		var params = {
-		  // Plain text search for places with the word "hotel"
-		  // associated with them:
-		  //'cat': type,
-		  //  Search in the Chinatown district in San Francisco:
-		  'at': lat+','+lng
-		};
-
-		// Define a callback function to handle data on success:
-		function onResult(data) {
-			console.log(data.results.items);
-			console.log(vm);
-			data.results.items.forEach(function(location, id) {
-				location.id = id;
-
-				vm.addLocation(location);
-			});
-
-
-
-			if (callback !== null) {
-				callback();
-			}
-		}
-
-		// Define a callback function to handle errors:
-		function onError(data) {
-			error = data;
-		}
-
-		// Run a search request with parameters, headers (empty), and
-		// callback functions:
-		search.request(params, {}, onResult, onError);
-	},
+  SELF.hours = ko.observable(hours);
+  SELF.address = ko.observable(location.vicinity);
 };
 
 function ViewModel() {
-	var self = this;
+  const SELF = this;
 
-	self.defaultCities = [
-		{ name: 'New York, NY', position: {lat: 40.7128, lng: -74.0059} },
-		{ name: 'San Francisco, CA', position: {lat: 37.7749, lng: -122.4194} },
-		{ name: 'Denver, CO', position: {lat: 39.7392, lng: -104.9903} },
-		{ name: 'London, UK', position: {lat: 51.5074, lng: -0.1278} },
-		{ name: 'Manila, PH', position: {lat: 14.5995, lng: 120.9842} }
-	];
+  SELF.map = null;
 
-	// set to Denver by default
-	self.currentLocation = ko.observable(self.defaultCities[2].position);
+  SELF.firstRun = true;
 
-	self.currentLocation.subscribe(function(newLocation) {
-		if (firstRun) {
-			return false;
-		}
+  SELF.defaultCities = ko.observableArray([{
+    name: 'New York, NY',
+    position: {
+      lat: 40.7128,
+      lng: -74.0059,
+    },
+  },
+  {
+    name: 'San Francisco, CA',
+    position: {
+      lat: 37.7749,
+      lng: -122.4194,
+    },
+  },
+  {
+    name: 'Denver, CO',
+    position: {
+      lat: 39.7392,
+      lng: -104.9903,
+    },
+  },
+  {
+    name: 'London, UK',
+    position: {
+      lat: 51.5074,
+      lng: -0.1278,
+    },
+  },
+  {
+    name: 'Manila, PH',
+    position: {
+      lat: 14.5995,
+      lng: 120.9842,
+    },
+  }]);
 
-		// wipe out markers
-		ko.utils.arrayForEach(self.locations(), function(location) {
-			location.marker.setMap(null);
-		});
+  // set to Denver by default
+  SELF.currentLocation = ko.observable(SELF.defaultCities()[2]);
 
-		self.locations([]);
+  SELF.currentLocation.subscribe(function (newLocation) {
+    if (SELF.firstRun) {
+      return false;
+    }
 
-		map.setCenter({lat: self.currentLocation().lat, lng: self.currentLocation().lng});
+    // wipe out markers
+    ko.utils.arrayForEach(SELF.places(), function (location) {
+      console.log(location.marker);
+      location.marker.setMap(null);
+    });
 
-		octopus.getLocations(self.currentLocation().lat, self.currentLocation().lng, octopus.addMarkers);
-	});
+    SELF.places([]);
 
-	self.categoryFilter = ko.observable(['all']);
-	self.locations = ko.observableArray([]);
+    SELF.map.setCenter({
+      lat: newLocation.position.lat,
+      lng: newLocation.position.lng,
+    });
 
-	self.locationCategories = ko.computed(function() {
-		var categories = ['all'];
+    octopus.getPlaces(newLocation.position.lat, newLocation.position.lng, octopus.addMarkers);
+  });
 
-		ko.utils.arrayForEach(self.locations(), function(location) {
-			category = location.category();
+  SELF.categoryFilter = ko.observable(['all']);
+  SELF.places = ko.observableArray([]);
 
-			if (categories.indexOf(category) === -1) {
-				categories.push(category);
-			}
-		});
+  SELF.locationCategories = ko.computed(function () {
+    const CATEGORIES = ['all'];
 
-		return categories;
-	}, self);
+    ko.utils.arrayForEach(SELF.places(), function (location) {
+      const CATEGORY = location.category();
 
-	self.addMarker = function(location) {
-		// save reference to marker
-        var marker = new google.maps.Marker({
-        	animation: google.maps.Animation.DROP,
-        	position: location.position,
-        	icon: location.icon,
-        	map: map
-        });
+      if (CATEGORIES.indexOf(CATEGORY) === -1) {
+        CATEGORIES.push(CATEGORY);
+      }
+    });
 
-        return marker;
-	};
+    return CATEGORIES;
+  }, SELF);
 
-	self.removeMarker = function(marker) {
-		// google remove marker
+  SELF.addMarker = function addMarker(location) {
+    // save reference to marker
+    const MARKER = new google.maps.Marker({
+      animation: google.maps.Animation.DROP,
+      position: location.position,
+      icon: location.icon,
+      map: SELF.map,
+    });
 
-		markers.remove(marker);
-	};
+    return MARKER;
+  };
 
-	self.addLocation = function(location) {
-		this.locations.push(new Location(location));
-	};
+  SELF.addLocation = function addLocation(location) {
+    SELF.places.push(new Location(location));
+  };
 
-	self.addCategory = function(category) {
-		// make sure category doesn't already exist in array
-		if (this.locationCategories.indexOf(category) === -1) {
-			this.locationCategories.push(category);
-		}
-	};
+  SELF.addCategory = function addCategory(category) {
+    // make sure category doesn't already exist in array
+    if (SELF.locationCategories.indexOf(category) === -1) {
+      SELF.locationCategories.push(category);
+    }
+  };
 
-	self.filteredLocations = ko.computed(function() {
-		var categoryFilter = self.categoryFilter()[0];
+  SELF.filteredPlaces = ko.computed(function () {
+    const CATEGORY_FILTER = SELF.categoryFilter()[0];
 
-		return ko.utils.arrayFilter(self.locations(), function(location) {
-			if (location.category() === categoryFilter || categoryFilter === 'all') {
-				keep = true;
-				
-				if (location.marker !== undefined) {
-					location.marker.setVisible(true);
-				}
-			} else {
-				keep = false;
+    return ko.utils.arrayFilter(SELF.places(), function(location) {
+      let keep = false;
 
-				if (location.marker !== undefined) {
-					location.marker.setVisible(false);
-				}
-			}
+      if (location.category() === CATEGORY_FILTER || CATEGORY_FILTER === 'all') {
+        keep = true;
+      }
 
-			return keep;
-		});
-	}, self);
+      if (location.marker !== undefined) {
+        location.marker.setVisible(keep);
+      }
 
-	self.onMouseoverListItem = function(location) {
-		location.marker.defaultIcon = location.marker.icon;
-		location.marker.setIcon('/images/here2.png');
-	};
+      return keep;
+    });
+  }, SELF);
 
-	self.onMouseoutListItem = function(location) {
-		location.marker.setAnimation(null);
-		location.marker.setIcon(location.marker.defaultIcon);
+  SELF.onMouseoverListItem = function onMouseoverListItem(location) {
+    location.marker.defaultIcon = location.marker.icon;
+    location.marker.setIcon('/images/here.png');
+  };
 
-		if (location.infoWindow !== undefined) {
-			location.infoWindow.close();
+  SELF.onMouseoutListItem = function onMouseoutListItem(location) {
+    location.marker.setAnimation(null);
+    location.marker.setIcon(location.marker.defaultIcon);
 
-			// track open status
-			location.infoWindow.opened = false;
-		}
-	};
+    if (location.infoWindow !== undefined) {
+      location.infoWindow.close();
 
-	self.onClickListItem = function(location) {
-		// if info window doesn't exist create and assign to location object
-		if (location.infoWindow === undefined) {
-			location.infoWindow = new google.maps.InfoWindow({
-				content: '<h3>'+location.name()+'</h3><p><strong>Address:</strong> '+location.address()+'</p><p><strong>Hours:</strong> '+location.hours()+'</p>'
-			});
-		}
+      // track open status
+      location.infoWindow.opened = false;
+    }
+  };
 
-		// https://github.com/angular-ui/angular-google-maps/issues/606
-		// if info window not opened open it
-		if (!location.infoWindow.opened) {
-			location.infoWindow.open(map, location.marker);
+  SELF.onClickListItem = function onClickListItem(location) {
+    // if info window doesn't exist create and assign to location object
+    if (location.infoWindow === undefined) {
+      const HTML = `<h3> ${location.name()}</h3>` +
+        `<p><strong>Address:</strong> ${location.address()}</p>` +
+        `<p><strong>Hours:</strong> ${location.hours()}</p>`;
 
-			// track open status
-			location.infoWindow.opened = true;
-		}
+      location.infoWindow = new google.maps.InfoWindow({
+        content: HTML,
+      });
+    }
 
-		// animate marker
-		location.marker.setAnimation(google.maps.Animation.BOUNCE);
-	};
+    // https://github.com/angular-ui/angular-google-maps/issues/606
+    // if info window not opened open it
+    if (!location.infoWindow.opened) {
+      location.infoWindow.open(SELF.map, location.marker);
 
-	self.onCitySelection = function(city) {
-		self.currentLocation(city.position);
-	};
+      // track open status
+      location.infoWindow.opened = true;
+    }
+
+    // animate marker
+    location.marker.setAnimation(google.maps.Animation.BOUNCE);
+  };
+
+  SELF.onCitySelection = function onCitySelection(city) {
+    SELF.currentLocation(city);
+  };
+
+  SELF.onFilterSelection = function onFilterSelection(filter) {
+    SELF.categoryFilter([filter])
+  };
 }
 
-var Location = function(location) {
-	var self = this;
-	var hours = 'N/A';
+const VM = new ViewModel();
 
-	self.id = ko.observable(location.id);
-	self.name = ko.observable(location.title);
-	self.category = ko.observable(location.category.id);
-	self.lat = ko.observable(location.position[0]);
-	self.lng = ko.observable(location.position[1]);
-	self.icon = ko.observable(location.icon);
+const octopus = {
+  addMarkers() {
+    VM.places().forEach(function (location) {
+      const LAT = location.lat();
+      const LNG = location.lng();
 
-	// if hours set save to location obj
-	if (location.openingHours !== undefined) {
-		hours = location.openingHours.text;
-	}
+      location.marker = VM.addMarker({
+        position: {
+          lat: LAT,
+          lng: LNG,
+        },
+        icon: location.icon(),
+      });
+    });
+  },
+  getPlaces(lat, lng, callback) {
+    VM.firstRun = false;
 
-	self.hours = ko.observable(hours);
-	self.address = ko.observable(location.vicinity);
+    const platform = new H.service.Platform({
+      app_id: 'JaSjic2QLCII4hn6wa2V',
+      app_code: '-9DtJ2wENRacgkqeW0haBg',
+    });
+
+    // Obtain an Explore object through which to submit search
+    let search = new H.places.Explore(platform.getPlacesService());
+    let searchResult;
+    let error;
+
+    // Define search parameters:
+    const PARAMS = {
+      at: lat + ',' + lng,
+    };
+
+    // Define a callback function to handle data on success:
+    function onResult(data) {
+      data.results.items.forEach(function (location, id) {
+        location.id = id;
+
+        VM.addLocation(location);
+      });
+
+      if (callback !== null) {
+        callback();
+      }
+    }
+
+    // Define a callback function to handle errors:
+    function onError(data) {
+      error = data;
+    }
+
+    // Run a search request
+    search.request(PARAMS, {}, onResult, onError);
+  },
 };
 
-var vm = new ViewModel();
+function initMap() {
+  function showPosition() {
+    // Create a map object and specify the DOM element for display.
+    VM.map = new google.maps.Map(document.getElementById('map'), {
+      center: {
+        lat: VM.currentLocation().position.lat,
+        lng: VM.currentLocation().position.lng,
+      },
+      scrollbar: false,
+      zoom: 14,
+      rotateControl: true,
+    });
 
-ko.applyBindings(vm);
+    octopus.getPlaces(VM.currentLocation().position.lat, VM.currentLocation().position.lng, octopus.addMarkers);
+  }
+
+  // update location data based on user position
+  function updateLatLng(position) {
+  	const geocoder = new google.maps.Geocoder;
+
+  	const latlng = {
+	  lat: position.coords.latitude,
+      lng: position.coords.longitude,
+	};
+
+  	geocoder.geocode({ 'location': latlng }, function(results, status) {
+  	  console.log(results);
+
+  	  // locality = city
+  	  // administrative_area_level_1 = state
+
+	  VM.currentLocation({
+		name: 'filler',
+		position: latlng,
+	  });
+  	});
+
+    showPosition();
+  }
+
+  // request user location from browser
+  function getLocation() {
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(updateLatLng);
+    } else {
+      showPosition();
+    }
+  }
+
+  getLocation();
+}
+
+ko.applyBindings(VM);

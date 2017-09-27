@@ -34,11 +34,10 @@
 
     <script defer src="https://js.api.here.com/v3/3.0/mapsjs-core.js"
   type="text/javascript" charset="utf-8"></script>
-<script defer src="https://js.api.here.com/v3/3.0/mapsjs-service.js"
+	<script defer src="https://js.api.here.com/v3/3.0/mapsjs-service.js"
   type="text/javascript" charset="utf-8"></script>
   	<script defer src="https://js.api.here.com/v3/3.0/mapsjs-places.js"
-  type="text/javascript" charset="utf-8">
-  </script>
+  type="text/javascript" charset="utf-8"></script>
     <script defer src="app.js"></script>
 
 	<script defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAkBimU8B-j_LerRypWOC9C7PYf-5XK0AY&libraries=places&callback=initMap"
@@ -46,9 +45,9 @@
 
 	<style>
       #map {
-      	margin-top: 50px;
         width: 100%;
-        height: 400px;
+        height: 500px;
+        position: relative;
         background-color: grey;
       }
       /*#list {
@@ -63,64 +62,62 @@
       #list li {
       	cursor: pointer;
       }
+
+      .navbar {
+      	margin-bottom: 0;
+      }
     </style>
 </head>
 <body>
-	<!--<header>
-		<div class="container">
-			<div class="row">
-		       <div id="custom-search-input">
-		            <div class="input-group col-md-12">
-		                <input type="text" class="  search-query form-control" placeholder="Search" />
-		                <span class="input-group-btn">
-		                    <button class="btn btn-danger" type="button">
-		                        <span class=" glyphicon glyphicon-search"></span>
-		                    </button>
-		                </span>
-		            </div>
-		        </div>
-			</div>
-		</div>
-	</header>-->
-	<nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
-	    <div class="container">
-	        <div class="navbar-header">
-	            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
-	                <span class="sr-only">Toggle navigation</span>
-	                <span class="icon-bar"></span>
-	                <span class="icon-bar"></span>
-	                <span class="icon-bar"></span>
-	            </button>
-	        </div>
+<nav class="navbar navbar-default">
+  <div class="container-fluid">
+    <!-- Brand and toggle get grouped for better mobile display -->
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="#"><span data-bind="text: currentLocation().name || 'City'"></span> | <span data-bind="text: categoryFilter"></span></a>
+    </div>
 
-	        <!-- Collect the nav links, forms, and other content for toggling -->
-	        <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
-	            <ul class="nav navbar-nav nav-pills" data-bind="foreach: defaultCities">
-	                <!--<li class="active"><a href="#" city="denver" data-bind="click: onCitySelection.bind($data, $element)">Denver, CO</a></li>-->
-	                <li><a href="#" data-bind="text: name, click: $root.onCitySelection"></a></li>
-	            </ul>
-	            <ul class="nav nav-pills">
-	            	<li>Drug Store</li>
-	            	<li>Movies</li>
-	            </ul>
-	        </div>
-	    </div>
-	</nav>
-	<div class="row">
-		<div class="col-xs-4 col-sm-4 col-md-4 col-lg-4" style="padding-top: 50px;">
-			<select class="form-control" data-bind="options: locationCategories, selectedOptions: categoryFilter">
+    <!-- Collect the nav links, forms, and other content for toggling -->
+    <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+      <ul class="nav navbar-nav">
+        <li class="dropdown">
+          <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"><span data-bind="text: currentLocation().name || 'Change City'"></span> <span class="caret"></span></a>
+	      <ul class="dropdown-menu" data-bind="foreach: defaultCities">
+		   <li><a href="#" data-bind="text: name, click: $root.onCitySelection"></a></li>
+	      </ul>
+        </li>
+        <li class="dropdown">
+          <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"><span data-bind="text: categoryFilter">Change Place Type</span> <span class="caret"></span></a>
+	      <ul class="dropdown-menu" data-bind="foreach: locationCategories">
+		   <li><a href="#" data-bind="text: $data, click: $root.onFilterSelection"></a></li>
+	      </ul>
+        </li>
+      </ul>
+    </div><!-- /.navbar-collapse -->
+  </div><!-- /.container-fluid -->
+</nav>
+	<div id="page-content">
+		<div class="row">
+			<!--<div class="col-xs-2 col-sm-2 col-md-2 col-lg-2">
+				<!--<select class="form-control" data-bind="options: locationCategories, selectedOptions: categoryFilter">
 
-			</select>
-			<ul id="list" data-bind="foreach: filteredLocations">
-				<li title="Click to display additional information" data-bind="event: { mouseover: $root.onMouseoverListItem, mouseout: $root.onMouseoutListItem, click: $root.onClickListItem }, text: name"></li>
-			</ul>
-		</div>
-		<div class="col-xs-8 col-sm-8 col-md-8 col-lg-8">
-			<div class="container" id="map">
-				
+				</select>
+				<ul id="list" data-bind="foreach: filteredPlaces">
+					<li title="Click to display additional information" data-bind="event: { mouseover: $root.onMouseoverListItem, mouseout: $root.onMouseoutListItem, click: $root.onClickListItem }, text: name"></li>
+				</ul>
+			</div>-->
+			<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+				<div class="container" id="map">
+					
+				</div>
 			</div>
 		</div>
 	</div>
-	<footer></footer>
+	<!--<footer></footer>-->
 </body>
 </html>
