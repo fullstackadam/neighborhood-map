@@ -85,8 +85,9 @@ function ViewModel() {
 
     // wipe out markers
     ko.utils.arrayForEach(SELF.places(), function (location) {
-      console.log(location.marker);
-      location.marker.setMap(null);
+      if (location.marker !== undefined) {
+      	location.marker.setMap(null);
+      }
     });
 
     SELF.places([]);
@@ -96,7 +97,14 @@ function ViewModel() {
       lng: newLocation.position.lng,
     });
 
-    octopus.getPlaces(newLocation.position.lat, newLocation.position.lng, octopus.addMarkers);
+    // reset filter for new location
+    SELF.categoryFilter(['all']);
+
+    octopus.getPlaces(
+    	newLocation.position.lat,
+    	newLocation.position.lng,
+    	octopus.addMarkers
+    );
   });
 
   SELF.categoryFilter = ko.observable(['all']);
