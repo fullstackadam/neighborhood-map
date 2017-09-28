@@ -92,10 +92,7 @@ function ViewModel() {
 
     SELF.places([]);
 
-    SELF.map.setCenter({
-      lat: newLocation.position.lat,
-      lng: newLocation.position.lng,
-    });
+    SELF.recenterMap();
 
     // reset filter for new location
     SELF.categoryFilter(['all']);
@@ -106,6 +103,13 @@ function ViewModel() {
     	octopus.addMarkers
     );
   });
+
+  SELF.recenterMap = function recenterMap() {
+    SELF.map.setCenter({
+      lat: SELF.currentLocation().position.lat,
+      lng: SELF.currentLocation().position.lng,
+    });
+  };
 
   SELF.categoryFilter = ko.observable(['all']);
   SELF.places = ko.observableArray([]);
@@ -351,3 +355,11 @@ function initMap() {
 }
 
 ko.applyBindings(VM);
+
+window.addEventListener('resize', function() {
+  $('#map').height(window.innerHeight - 50);
+
+  VM.recenterMap();
+});
+
+$('#map').height(window.innerHeight - 50);
