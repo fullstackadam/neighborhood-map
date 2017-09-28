@@ -294,11 +294,35 @@ function initMap() {
   	geocoder.geocode({ 'location': latlng }, function(results, status) {
   	  console.log(results);
 
-  	  // locality = city
-  	  // administrative_area_level_1 = state
+
+  	  results = results[0].address_components;
+  	  let types = [];
+  	  let city = false;
+  	  let state = false;
+  	  
+  	  for (let i = 0; i < results.length; i++) {
+  	  	types = results[i].types;
+
+  	  	for (let j = 0; j < types.length; j++) {
+  	  		if (!city && types[j] === 'locality') {
+  	  			city = results[i].short_name;
+  	  		}
+
+  	  		if (!state && types[j] === 'administrative_area_level_1') {
+  	  			state = results[i].short_name;
+  	  		}
+  	  	}
+  	  }
+
+  	  const name = city + ', ' + state;
+
+  	  VM.defaultCities.unshift({
+		name: name,
+		position: latlng,
+	  });
 
 	  VM.currentLocation({
-		name: 'filler',
+		name: name,
 		position: latlng,
 	  });
   	});
