@@ -2,7 +2,8 @@ var gulp = require('gulp'),
   htmlMinify = require('gulp-htmlmin'),
   cssMinify = require('gulp-clean-css'),
   jsMinify = require('gulp-jsmin'),
-  serve = require('gulp-serve');
+  serve = require('gulp-serve'),
+  watch = require('gulp-watch');
 
 gulp.task('htmlMinify', () => {
   gulp.src('src/*.html')
@@ -22,11 +23,13 @@ gulp.task('cssMinify', () => {
 });
 
 gulp.task('jsMinify', () => {
-  gulp.src('src/*.js')
+  gulp.src('src/js/*.js')
     .pipe(jsMinify())
-    .pipe(gulp.dest('dist/'));
+    .pipe(gulp.dest('dist/js'));
 });
 
 gulp.task('serve', serve('dist'));
+
+gulp.watch('src/*', ['htmlMinify', 'imageCopy', 'cssMinify', 'jsMinify']);
 
 gulp.task('default', ['htmlMinify', 'imageCopy', 'cssMinify', 'jsMinify', 'serve']);
