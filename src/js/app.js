@@ -12,24 +12,24 @@
  * @returns {object} location with properties set as observables
  */
 
-const Location = function Location(location) {
+const Place = function Place(place) {
   const SELF = this;
   let hours = 'N/A';
 
-  SELF.id = ko.observable(location.id);
-  SELF.name = ko.observable(location.title);
-  SELF.category = ko.observable(location.category.id);
-  SELF.lat = ko.observable(location.position[0]);
-  SELF.lng = ko.observable(location.position[1]);
-  SELF.icon = ko.observable(location.icon);
+  SELF.id = ko.observable(place.id);
+  SELF.name = ko.observable(place.title);
+  SELF.category = ko.observable(place.category.id);
+  SELF.lat = ko.observable(place.position[0]);
+  SELF.lng = ko.observable(place.position[1]);
+  SELF.icon = ko.observable(place.icon);
 
-  // if hours set save to location obj
-  if (location.openingHours !== undefined) {
-    hours = location.openingHours.text;
+  // if hours set save to place obj
+  if (place.openingHours !== undefined) {
+    hours = place.openingHours.text;
   }
 
   SELF.hours = ko.observable(hours);
-  SELF.address = ko.observable(location.vicinity);
+  SELF.address = ko.observable(place.vicinity);
 };
 
 function ViewModel() {
@@ -84,9 +84,9 @@ function ViewModel() {
     }
 
     // wipe out markers
-    ko.utils.arrayForEach(SELF.places(), function (location) {
-      if (location.marker !== undefined) {
-      	location.marker.setMap(null);
+    ko.utils.arrayForEach(SELF.places(), function (place) {
+      if (place.marker !== undefined) {
+      	place.marker.setMap(null);
       }
     });
 
@@ -114,11 +114,11 @@ function ViewModel() {
   SELF.categoryFilter = ko.observable(['all']);
   SELF.places = ko.observableArray([]);
 
-  SELF.locationCategories = ko.computed(function () {
+  SELF.placeCategories = ko.computed(function () {
     const CATEGORIES = ['all'];
 
-    ko.utils.arrayForEach(SELF.places(), function (location) {
-      const CATEGORY = location.category();
+    ko.utils.arrayForEach(SELF.places(), function (place) {
+      const CATEGORY = place.category();
 
       if (CATEGORIES.indexOf(CATEGORY) === -1) {
         CATEGORIES.push(CATEGORY);
@@ -128,87 +128,87 @@ function ViewModel() {
     return CATEGORIES;
   }, SELF);
 
-  SELF.addMarker = function addMarker(location) {
+  SELF.addMarker = function addMarker(place) {
     // save reference to marker
     const MARKER = new google.maps.Marker({
       animation: google.maps.Animation.DROP,
-      position: location.position,
-      icon: location.icon,
+      position: place.position,
+      icon: place.icon,
       map: SELF.map,
     });
 
     return MARKER;
   };
 
-  SELF.addLocation = function addLocation(location) {
-    SELF.places.push(new Location(location));
+  SELF.addPlace = function addPlace(place) {
+    SELF.places.push(new Place(place));
   };
 
   SELF.addCategory = function addCategory(category) {
     // make sure category doesn't already exist in array
-    if (SELF.locationCategories.indexOf(category) === -1) {
-      SELF.locationCategories.push(category);
+    if (SELF.placeCategories.indexOf(category) === -1) {
+      SELF.placeCategories.push(category);
     }
   };
 
   SELF.filteredPlaces = ko.computed(function () {
     const CATEGORY_FILTER = SELF.categoryFilter()[0];
 
-    return ko.utils.arrayFilter(SELF.places(), function(location) {
+    return ko.utils.arrayFilter(SELF.places(), function(place) {
       let keep = false;
 
-      if (location.category() === CATEGORY_FILTER || CATEGORY_FILTER === 'all') {
+      if (place.category() === CATEGORY_FILTER || CATEGORY_FILTER === 'all') {
         keep = true;
       }
 
-      if (location.marker !== undefined) {
-        location.marker.setVisible(keep);
+      if (place.marker !== undefined) {
+        place.marker.setVisible(keep);
       }
 
       return keep;
     });
   }, SELF);
 
-  SELF.onMouseoverListItem = function onMouseoverListItem(location) {
-    location.marker.defaultIcon = location.marker.icon;
-    location.marker.setIcon('/images/here.png');
+  SELF.onMouseoverListItem = function onMouseoverListItem(place) {
+    place.marker.defaultIcon = place.marker.icon;
+    place.marker.setIcon('/images/here.png');
   };
 
-  SELF.onMouseoutListItem = function onMouseoutListItem(location) {
-    location.marker.setAnimation(null);
-    location.marker.setIcon(location.marker.defaultIcon);
+  SELF.onMouseoutListItem = function onMouseoutListItem(place) {
+    place.marker.setAnimation(null);
+    place.marker.setIcon(place.marker.defaultIcon);
 
-    if (location.infoWindow !== undefined) {
-      location.infoWindow.close();
+    if (place.infoWindow !== undefined) {
+      place.infoWindow.close();
 
       // track open status
-      location.infoWindow.opened = false;
+      place.infoWindow.opened = false;
     }
   };
 
-  SELF.onClickListItem = function onClickListItem(location) {
+  SELF.onClickListItem = function onClickListItem(place) {
     // if info window doesn't exist create and assign to location object
-    if (location.infoWindow === undefined) {
-      const HTML = `<h3> ${location.name()}</h3>` +
-        `<p><strong>Address:</strong> ${location.address()}</p>` +
-        `<p><strong>Hours:</strong> ${location.hours()}</p>`;
+    if (place.infoWindow === undefined) {
+      const HTML = `<h3> ${place.name()}</h3>` +
+        `<p><strong>Address:</strong> ${place.address()}</p>` +
+        `<p><strong>Hours:</strong> ${place.hours()}</p>`;
 
-      location.infoWindow = new google.maps.InfoWindow({
+      place.infoWindow = new google.maps.InfoWindow({
         content: HTML,
       });
     }
 
     // https://github.com/angular-ui/angular-google-maps/issues/606
     // if info window not opened open it
-    if (!location.infoWindow.opened) {
-      location.infoWindow.open(SELF.map, location.marker);
+    if (!place.infoWindow.opened) {
+      place.infoWindow.open(SELF.map, place.marker);
 
       // track open status
-      location.infoWindow.opened = true;
+      place.infoWindow.opened = true;
     }
 
     // animate marker
-    location.marker.setAnimation(google.maps.Animation.BOUNCE);
+    place.marker.setAnimation(google.maps.Animation.BOUNCE);
   };
 
   SELF.onCitySelection = function onCitySelection(city) {
@@ -224,16 +224,20 @@ const VM = new ViewModel();
 
 const octopus = {
   addMarkers() {
-    VM.places().forEach(function (location) {
-      const LAT = location.lat();
-      const LNG = location.lng();
+    VM.places().forEach(function (place) {
+      const LAT = place.lat();
+      const LNG = place.lng();
 
-      location.marker = VM.addMarker({
+      place.marker = VM.addMarker({
         position: {
           lat: LAT,
           lng: LNG,
         },
-        icon: location.icon(),
+        icon: place.icon(),
+      });
+
+      place.marker.addListener('click', function() {
+        VM.onClickListItem(place);
       });
     });
   },
@@ -257,10 +261,10 @@ const octopus = {
 
     // Define a callback function to handle data on success:
     function onResult(data) {
-      data.results.items.forEach(function (location, id) {
+      data.results.items.forEach(function (place, id) {
         location.id = id;
 
-        VM.addLocation(location);
+        VM.addPlace(place);
       });
 
       if (callback !== null) {
@@ -299,11 +303,11 @@ function initMap() {
   	const geocoder = new google.maps.Geocoder;
 
   	const latlng = {
-	  lat: position.coords.latitude,
+	    lat: position.coords.latitude,
       lng: position.coords.longitude,
-	};
+	  };
 
-  	geocoder.geocode({ 'location': latlng }, function(results, status) {
+    geocoder.geocode({ 'location': latlng }, function(results, status) {
   	  console.log(results);
 
 
@@ -329,17 +333,17 @@ function initMap() {
   	  const name = city + ', ' + state;
 
   	  VM.defaultCities.unshift({
-		name: name,
-		position: latlng,
-	  });
+		    name: name,
+		    position: latlng,
+      });
 
-	  VM.currentLocation({
-		name: name,
-		position: latlng,
-	  });
+  	  VM.currentLocation({
+    		name: name,
+    		position: latlng,
+  	  });
+
+      showPosition();
   	});
-
-    showPosition();
   }
 
   // request user location from browser
@@ -363,3 +367,13 @@ window.addEventListener('resize', function() {
 });
 
 $('#map').height(window.innerHeight - 50);
+
+/*const options = {
+  horizontal: false,
+  itemNav: 'basic',
+  speed: 300,
+  mouseDragging: 1,
+  touchDragging: 1
+};
+
+var frame = new Sly('#list', options).init();*/
