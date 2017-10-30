@@ -5,33 +5,6 @@
 // https://github.com/paulmillr/es6-shim
 // onresize set map center
 
-/**
- * @description Represents a location
- * @constructor
- * @param {object} location - location properties
- * @returns {object} location with properties set as observables
- */
-
-const Place = function Place(place) {
-  const SELF = this;
-  let hours = 'N/A';
-
-  SELF.id = ko.observable(place.id);
-  SELF.name = ko.observable(place.title);
-  SELF.category = ko.observable(place.category.id);
-  SELF.lat = ko.observable(place.position[0]);
-  SELF.lng = ko.observable(place.position[1]);
-  SELF.icon = ko.observable(place.icon);
-
-  // if hours set save to place obj
-  if (place.openingHours !== undefined) {
-    hours = place.openingHours.text;
-  }
-
-  SELF.hours = ko.observable(hours);
-  SELF.address = ko.observable(place.vicinity);
-};
-
 function ViewModel() {
   const SELF = this;
 
@@ -193,6 +166,7 @@ function ViewModel() {
         `<p><strong>Address:</strong> ${place.address()}</p>` +
         `<p><strong>Hours:</strong> ${place.hours()}</p>`;
 
+      place.marker.setIcon('/images/here.png');
       place.infoWindow = new google.maps.InfoWindow({
         content: HTML,
       });
@@ -216,7 +190,7 @@ function ViewModel() {
   };
 
   SELF.onFilterSelection = function onFilterSelection(filter) {
-    SELF.categoryFilter([filter])
+    SELF.categoryFilter([filter]);
   };
 }
 
@@ -327,23 +301,23 @@ function initMap() {
   	  		if (!state && types[j] === 'administrative_area_level_1') {
   	  			state = results[i].short_name;
   	  		}
-  	  	}
-  	  }
+        }
+      }
 
   	  const name = city + ', ' + state;
 
   	  VM.defaultCities.unshift({
 		    name: name,
-		    position: latlng,
+        position: latlng,
       });
 
   	  VM.currentLocation({
     		name: name,
     		position: latlng,
-  	  });
+      });
 
       showPosition();
-  	});
+    });
   }
 
   // request user location from browser
@@ -360,7 +334,7 @@ function initMap() {
 
 ko.applyBindings(VM);
 
-window.addEventListener('resize', function() {
+window.addEventListener('resize', function () {
   $('#map').height(window.innerHeight - 50);
 
   VM.recenterMap();
@@ -368,7 +342,7 @@ window.addEventListener('resize', function() {
 
 $('#map').height(window.innerHeight - 50);
 
-/*const options = {
+const options = {
   horizontal: false,
   itemNav: 'basic',
   speed: 300,
@@ -376,4 +350,4 @@ $('#map').height(window.innerHeight - 50);
   touchDragging: 1
 };
 
-var frame = new Sly('#list', options).init();*/
+var frame = new Sly('#list', options).init();
