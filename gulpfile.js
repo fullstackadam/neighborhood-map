@@ -26,10 +26,19 @@ gulp.task('jsMinify', () => {
   gulp.src('src/js/*.js')
     .pipe(jsMinify())
     .pipe(gulp.dest('dist/js'));
+  gulp.src('src/js/config/*.js')
+    .pipe(jsMinify())
+    .pipe(gulp.dest('dist/js/config'));
+  gulp.src('src/js/models/*.js')
+    .pipe(jsMinify())
+    .pipe(gulp.dest('dist/js/models'));
+  gulp.src('src/js/viewmodels/*.js')
+    .pipe(jsMinify())
+    .pipe(gulp.dest('dist/js/viewmodels'));
 });
 
 gulp.task('serve', serve('dist'));
 
-gulp.watch('src/*', ['htmlMinify', 'imageCopy', 'cssMinify', 'jsMinify']);
+gulp.watch('src/*', ['htmlMinify', 'imageCopy', 'cssMinify', 'jsMinify', 'serve']);
 
 gulp.task('default', ['htmlMinify', 'imageCopy', 'cssMinify', 'jsMinify', 'serve']);
