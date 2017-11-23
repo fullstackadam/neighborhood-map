@@ -1,9 +1,11 @@
 function NavView() {
   const SELF = this;
 
+  SELF.renderMap = ko.observable(false).syncWith('renderMap');
+
   SELF.location = ko.observable().syncWith('currentLocation', true); 
 
-  SELF.locations = ko.observableArray().subscribeTo('locations', true);
+  SELF.locations = ko.observableArray();
 
   SELF.filter = ko.observable().syncWith('filter', true);
   SELF.categories = ko.observableArray().subscribeTo('categories', true);
@@ -21,18 +23,6 @@ function NavView() {
   SELF.onFilterSelection = function(filter) {
     SELF.filter([filter]);
   };
-}
-
-/**
- * @description Location Model
- * @
- **/
-function LocationModel() {
-  const SELF = this;
-
-  SELF.renderMap = ko.observable(false).syncWith('renderMap');
-
-  SELF.locations = ko.observableArray().publishOn('locations');
 
   SELF.add = function(name, latlng) {
     SELF.locations.unshift({
@@ -114,4 +104,4 @@ function LocationModel() {
       }
     });
   }
-};
+}

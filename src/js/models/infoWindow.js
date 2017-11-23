@@ -17,6 +17,10 @@ function InfoWindow(marker) {
       content: HTML,
     }
   );
+
+  this.addListener('closeclick', function() {
+    this.close();
+  });
 }
 
 InfoWindow.prototype = Object.create(google.maps.InfoWindow.prototype);
@@ -46,6 +50,6 @@ InfoWindow.prototype.open = function() {
 
 InfoWindow.prototype.close = function() {
   google.maps.InfoWindow.prototype.close.call(this);
-
   this.opened = false;
+  this.marker.unhighlight();
 };

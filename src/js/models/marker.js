@@ -3,6 +3,7 @@ function Marker(map, place) {
   this.name = place.name;
   this.address = place.address;
   this.hours = place.hours;
+  this.icon = place.icon;
 
   latlng = {
     lat: place.lat,
@@ -12,7 +13,7 @@ function Marker(map, place) {
   let markerObj = {
     animation: google.maps.Animation.DROP,
     position: latlng,
-    icon: place.icon,
+    icon: this.icon,
     map: this.map,
   };
 
@@ -31,21 +32,19 @@ Marker.prototype = Object.create(google.maps.Marker.prototype);
 Marker.constructor.prototype = Marker;
 
 Marker.prototype.highlight = function() {
-  console.log('highlight marker');
   this.defaultIcon = this.icon;
   this.setIcon('/images/here.png');
   this.setAnimation(google.maps.Animation.BOUNCE);
 };
 
 Marker.prototype.unhighlight = function() {
-  console.log('unhighlight marker');
   this.setAnimation(null);
   this.setIcon(this.defaultIcon);
 
-  if (this.infoWindow !== null) {
-    this.infoWindow.close();
-  }
+  this.closeInfoWindow();
 };
+
+
 
 Marker.prototype.openInfoWindow = function() {
   if (this.infoWindow === null) {
@@ -57,9 +56,7 @@ Marker.prototype.openInfoWindow = function() {
 };
 
 Marker.prototype.closeInfoWindow = function() {
-  if (this.infoWindow === null) {
-    console.log('infoWindow does not exist');
-
+  if (this.infoWindow === null || !this.infoWindow.opened) {
     return;
   }
 

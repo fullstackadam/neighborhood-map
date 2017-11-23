@@ -1,9 +1,47 @@
 function ListView() {
   const SELF = this;
   
-  SELF.places = ko.observableArray().subscribeTo('filtered', true);
+  SELF.places = ko.observableArray();
 
   SELF.markerActionQueue = ko.observableArray().syncWith('markerActionQueue');
+
+  SELF.location = ko.observable().subscribeTo('currentLocation', true);
+
+  SELF.filter = ko.observable(['all']).syncWith('filter');
+
+  SELF.centerMap = ko.observable().syncWith('centerMap', true);
+
+  SELF.filtered = ko.computed(function () {
+    const CATEGORY_FILTER = SELF.filter()[0];
+
+    return ko.utils.arrayFilter(SELF.places(), function(place) {
+      let keep = false;
+
+      if (place.category === CATEGORY_FILTER || CATEGORY_FILTER === 'all') {
+        keep = true;
+      }
+
+      /*if (place.marker !== undefined) {
+        place.marker.setVisible(keep);
+      }*/
+
+      return keep;
+    });
+  }, SELF).publishOn('places');
+
+  SELF.categories = ko.computed(function () {
+    const CATEGORIES = ['all'];
+
+    ko.utils.arrayForEach(SELF.places(), function (place) {
+      const CATEGORY = place.category;
+
+      if (CATEGORIES.indexOf(CATEGORY) === -1) {
+        CATEGORIES.push(CATEGORY);
+      }
+    });
+
+    return CATEGORIES;
+  }, SELF).publishOn('categories');
 
   SELF.onMouseoverListItem = function(place) {
     SELF.newMarkerAction(
@@ -34,59 +72,6 @@ function ListView() {
 
     SELF.markerActionQueue.push(action);
   }
-}
-
-/**
- * @description Place Model
- * @contructor
- */
-
-function PlaceModel() {
-  const SELF = this;
-
-  SELF.location = ko.observable().subscribeTo('currentLocation', true);
-
-  SELF.filter = ko.observable(['all']).syncWith('filter');
-
-  SELF.places = ko.observableArray([]);
-
-  SELF.centerMap = ko.observable().syncWith('centerMap', true);
-
-  SELF.add = function(place) {
-    this.places.push(new Place(place));
-  };
-
-  SELF.filtered = ko.computed(function () {
-    const CATEGORY_FILTER = SELF.filter()[0];
-
-    return ko.utils.arrayFilter(SELF.places(), function(place) {
-      let keep = false;
-
-      if (place.category === CATEGORY_FILTER || CATEGORY_FILTER === 'all') {
-        keep = true;
-      }
-
-      if (place.marker !== undefined) {
-        place.marker.setVisible(keep);
-      }
-
-      return keep;
-    });
-  }, SELF).publishOn('filtered');
-
-  SELF.categories = ko.computed(function () {
-    const CATEGORIES = ['all'];
-
-    ko.utils.arrayForEach(SELF.places(), function (place) {
-      const CATEGORY = place.category;
-
-      if (CATEGORIES.indexOf(CATEGORY) === -1) {
-        CATEGORIES.push(CATEGORY);
-      }
-    });
-
-    return CATEGORIES;
-  }, SELF).publishOn('categories');
 
   SELF.import = function(lat, lng, callback) {
     //VM.firstRun = false;
@@ -113,7 +98,7 @@ function PlaceModel() {
 
       data.results.items.forEach(function (place, id) {
         place.id = id;
-        SELF.add(place);
+        SELF.places.push(new Place(place));
       });
 
       if (callback !== undefined) {

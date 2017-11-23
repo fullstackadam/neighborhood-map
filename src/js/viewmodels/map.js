@@ -3,7 +3,7 @@ function MapView() {
 
   SELF.location = ko.observable().subscribeTo('currentLocation', true);
 
-  SELF.places = ko.observableArray().subscribeTo('filtered', true);
+  SELF.places = ko.observableArray().subscribeTo('places', true);
 
   SELF.infoWindows = ko.observableArray();
 
@@ -40,7 +40,7 @@ function MapView() {
   SELF.markers = ko.computed(function() {
     let markers = [],
         marker;
-        
+
     // set new markers
     SELF.places().forEach(function (place, index) {
       marker = new Marker(window.map, place);
