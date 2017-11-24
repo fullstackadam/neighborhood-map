@@ -1,4 +1,4 @@
-function NavView() {
+function Nav() {
   const SELF = this;
 
   SELF.renderMap = ko.observable(false).syncWith('renderMap');

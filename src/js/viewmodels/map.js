@@ -1,4 +1,4 @@
-function MapView() {
+function Map() {
   const SELF = this;
 
   SELF.location = ko.observable().subscribeTo('currentLocation', true);
@@ -14,11 +14,11 @@ function MapView() {
   SELF.markerActionQueue.subscribe(function(value) {
     if (SELF.markerActionQueue().length !== 0) {
 
-      action = SELF.markerActionQueue.pop();
-      //console.log(action);
+      action = SELF.markerActionQueue.shift();
+
       SELF.markers()[action.id][action['action']]();
 
-      console.log('marker: ' + action.id + ' action: ' + action.action);
+      //console.log('marker: ' + action.id + ' action: ' + action.action);
     }
   });
 
@@ -74,7 +74,6 @@ function MapView() {
   });
 
   SELF.triggerCenter.subscribe(function(value) {
-    console.log('center updated: ' + value)
     if (window.map !== null && value) {
       SELF.center();
       SELF.triggerCenter(false);

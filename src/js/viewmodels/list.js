@@ -1,4 +1,4 @@
-function ListView() {
+function List() {
   const SELF = this;
   
   SELF.places = ko.observableArray();

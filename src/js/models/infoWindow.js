@@ -1,9 +1,12 @@
-function InfoWindow(marker) {
-  // if info window doesn't exist create and assign to location object
-//if (marker.infoWindow === undefined) {
+/**
+ * @description Represents a map InfoWindow.
+ * @constructor
+ * @param {object} marker
+ * @returns {object} InfoWindow
+ */
 
+function InfoWindow(marker) {
   this.marker = marker;
-  this.marker.setIcon('/images/here.png');
 
   const HTML = this.html(
     marker.name, 
@@ -17,10 +20,6 @@ function InfoWindow(marker) {
       content: HTML,
     }
   );
-
-  this.addListener('closeclick', function() {
-    this.close();
-  });
 }
 
 InfoWindow.prototype = Object.create(google.maps.InfoWindow.prototype);
@@ -28,6 +27,7 @@ InfoWindow.prototype = Object.create(google.maps.InfoWindow.prototype);
 // https://github.com/angular-ui/angular-google-maps/issues/606
 InfoWindow.prototype.opened = false;
 
+// build template for infowindow content
 InfoWindow.prototype.html = function(name, address, hours) {
   const HTML = `<h3> ${name}</h3>` +
     `<p><strong>Address:</strong> ${address}</p>` +
@@ -36,6 +36,7 @@ InfoWindow.prototype.html = function(name, address, hours) {
   return HTML;
 };
 
+// open infowindow and save state
 InfoWindow.prototype.open = function() {
   google.maps.InfoWindow.prototype.open.call(
     this,
@@ -43,13 +44,11 @@ InfoWindow.prototype.open = function() {
     this.marker
   );
 
-  this.marker.setAnimation(google.maps.Animation.BOUNCE);
-
   this.opened = true;
 };
 
+// close infowindow and save state
 InfoWindow.prototype.close = function() {
   google.maps.InfoWindow.prototype.close.call(this);
   this.opened = false;
-  this.marker.unhighlight();
 };

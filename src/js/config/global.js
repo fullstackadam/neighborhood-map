@@ -36,3 +36,10 @@ window.locations = [{
     lng: 120.9842,
   },
 }];
+
+window.markerHighlightedIcon = '/images/here.png';
+
+window.errorMessages = {
+  map: 'The map could not load.',
+  places: 'Could not connect to HERE to retrieve place information.'
+};
