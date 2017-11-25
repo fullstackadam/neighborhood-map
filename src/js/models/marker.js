@@ -53,7 +53,7 @@ Marker.prototype.unhighlight = function() {
   this.setAnimation(null);
   this.setIcon(this.defaultIcon);
 
-  this.closeInfoWindow();
+  //this.closeInfoWindow();
 };
 
 // create/open info window using marker data and highlight marker

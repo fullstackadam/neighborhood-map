@@ -57,10 +57,20 @@
     <script defer src="./js/viewmodels/map.js"></script>
     <script defer src="./js/viewmodels/nav.js"></script>
     <script defer src="/js/app.js"></script>
-	<style>
-	  #mapWrapper {
-	  	padding: 0;
-	  }
+  	<style>
+      .navbar-header {
+        margin: auto;
+        margin-top: 15px;
+        margin-bottom: -12px;
+      }
+      
+      .btn-group {
+        margin: 0;
+      }
+
+  	  #mapWrapper {
+  	  	padding: 0;
+  	  }
 
       #map {
         width: 100%;
@@ -153,18 +163,41 @@
             <i class="material-icons">menu</i>
           </button>
           <ul class="nav navbar-nav navBind">
-            <i id="recenterMapButton" class="material-icons" data-bind="click: recenterMap" title="Recenter Map">
-              center_focus_strong
-            </i>
+            <!--<li class="nav-item">
+              <i id="recenterMapButton" class="material-icons" data-bind="click: recenterMap" title="Recenter Map">
+                center_focus_strong
+              </i>
+            </li>
             <li class="nav-item">
               <span data-bind="text: location().name || 'City'"></span> | <span data-bind="text: filter"></span>
+            </li>-->
+            <li class="nav-item">
+              <div class="btn-group open">
+                <i id="recenterMapButton" class="material-icons" data-bind="click: recenterMap" title="Recenter Map">
+                  filter_center_focus
+                </i>
+              </div>
+              <div class="btn-group open">
+                <button class="btn dropdown-toggle" type="button" id="buttonMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" data-bind="text: location().name || 'Change City'">
+                </button>
+                <div class="dropdown-menu" aria-labelledby="buttonMenu1" data-bind="foreach: locations">
+                  <a class="dropdown-item" href="#" data-bind="text: name, click: $root.onCitySelection"></a>
+                </div>
+              </div>
+              <div class="btn-group open">
+                <button class="btn dropdown-toggle" type="button" id="buttonMenu2" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" data-bind="text: filter || 'Change Filter'">
+                </button>
+                <div class="dropdown-menu" aria-labelledby="buttonMenu2" data-bind="foreach: categories">
+                  <a class="dropdown-item" href="#" data-bind="text: $data, click: $root.onFilterSelection"></a>
+                </div>
+              </div>
             </li>
           </ul>
         </div>
       </header>
       
-      <div id="dw-s1" class="bmd-layout-drawer bg-faded">
-        <ul class="list-group">
+      <div id="dw-s1" class="bmd-layout-drawer bmd-drawer-in bg-faded">
+        <!--<ul class="list-group">
           <li class="list-group-item">
             <div class="btn-group open navBind">
               <button class="btn dropdown-toggle" type="button" id="buttonMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" data-bind="text: location().name || 'Change City'">
@@ -173,16 +206,19 @@
                 <a class="dropdown-item" href="#" data-bind="text: name, click: $root.onCitySelection"></a>
               </div>
 
-              <button class="btn dropdown-toggle" type="button" id="buttonMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" data-bind="text: filter || 'Change Filter'">
+              <button class="btn dropdown-toggle" type="button" id="buttonMenu2" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" data-bind="text: filter || 'Change Filter'">
               </button>
-              <div class="dropdown-menu" aria-labelledby="buttonMenu1" data-bind="foreach: categories">
+              <div class="dropdown-menu" aria-labelledby="buttonMenu2" data-bind="foreach: categories">
                 <a class="dropdown-item" href="#" data-bind="text: $data, click: $root.onFilterSelection"></a>
               </div>
             </div>
           </li>
-        </ul>
-
-        
+        </ul>-->
+        <div class="navbar-header">
+          <a class="navbar-brand navBind" href="#">
+            <span data-bind="text: location().name || 'City'"></span> | <span data-bind="text: filter"></span>
+          </a>
+        </div>
         <ul id="list" class="list-group" data-bind="foreach: filtered">
           <li class="list-group-item" title="Click to display additional information" data-bind="event: { mouseover: $root.onMouseoverListItem, mouseout: $root.onMouseoutListItem, click: $root.onClickListItem }, text: name"></li>
         </ul>
