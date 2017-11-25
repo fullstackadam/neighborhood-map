@@ -17,7 +17,7 @@ function Map() {
   SELF.markerActionQueue.subscribe(function(value) {
     if (SELF.markerActionQueue().length !== 0) {
 
-      action = SELF.markerActionQueue.shift();
+      const action = SELF.markerActionQueue.shift();
 
       SELF.markers()[action.id][action['action']]();
 

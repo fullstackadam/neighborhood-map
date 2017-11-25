@@ -1,6 +1,6 @@
 function List() {
   const SELF = this;
-  
+
   SELF.loadingState = ko.observable().syncWith('loadingState', true);
 
   SELF.places = ko.observableArray();
@@ -106,7 +106,7 @@ function List() {
 
     // Define a callback function to handle errors:
     function onError(data) {
-      error = data;
+      const error = data;
 
       SELF.loadingState('ERROR: could not load places from HERE api!');
     }

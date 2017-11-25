@@ -1,6 +1,7 @@
 // use 'strict';
 // https://github.com/paulmillr/es6-shim
 
+// for testing
 const NAV = new Nav();
 const LIST = new List();
 const MAP = new Map();

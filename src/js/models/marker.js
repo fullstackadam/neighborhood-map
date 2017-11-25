@@ -13,12 +13,12 @@ function Marker(map, place) {
   this.icon = place.icon;
   this.defaultIcon = place.icon;
 
-  latlng = {
+  const latlng = {
     lat: place.lat,
     lng: place.lng,
   };
 
-  let markerObj = {
+  const markerObj = {
     animation: google.maps.Animation.DROP,
     position: latlng,
     icon: this.icon,
