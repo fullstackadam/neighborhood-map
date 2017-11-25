@@ -7,11 +7,11 @@
     "gulp": "^3.9.1"
   },
   "devDependencies": {
-    "eslint": "^4.7.0",
-    "eslint-config-airbnb-base": "^12.0.0",
-    "eslint-plugin-import": "^2.7.0",
-    "gulp-serve": "^1.4.0",
-    "gulp-watch": "^4.3.11"
+    "gulp": "^3.9.1",
+    "gulp-clean-css": "^3.9.0",
+    "gulp-htmlmin": "^3.0.0",
+    "gulp-jsmin": "^0.1.5",
+    "gulp-serve": "^1.4.0"
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
