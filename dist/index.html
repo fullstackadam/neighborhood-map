@@ -1,4 +1,12 @@
-<!DOCTYPE html><html><head><title>Neighborhood Map</title><meta charset="utf-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width,initial-scale=1"><!-- bootstrap --><!-- Latest compiled and minified CSS --><link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous"><!-- Optional theme --><link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous"><script defer="defer" src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script><!-- Latest compiled and minified JavaScript --><script defer="defer" src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script><!-- knockout --><script defer="defer" src="https://cdnjs.cloudflare.com/ajax/libs/knockout/3.4.1/knockout-min.js"></script><!--<script defer src="/js/sly.min.js"></script>--><script defer="defer" src="https://js.api.here.com/v3/3.0/mapsjs-core.js" type="text/javascript" charset="utf-8"></script><script defer="defer" src="https://js.api.here.com/v3/3.0/mapsjs-service.js" type="text/javascript" charset="utf-8"></script><script defer="defer" src="https://js.api.here.com/v3/3.0/mapsjs-places.js" type="text/javascript" charset="utf-8"></script><script defer="defer" src="./js/knockout-postbox.js"></script><script defer="defer" src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAkBimU8B-j_LerRypWOC9C7PYf-5XK0AY&libraries=places" onerror="alert('could not load gmaps api')"></script><script defer="defer" src="./js/config/global.js"></script><script defer="defer" src="./js/models/location.js"></script><script defer="defer" src="./js/models/marker.js"></script><script defer="defer" src="./js/models/infoWindow.js"></script><script defer="defer" src="./js/models/place.js"></script><script defer="defer" src="./js/viewmodels/list.js"></script><script defer="defer" src="./js/viewmodels/map.js"></script><script defer="defer" src="./js/viewmodels/nav.js"></script><script defer="defer" src="/js/app.js"></script><style>#mapWrapper {
+<!DOCTYPE html><html><head><title>Neighborhood Map</title><meta charset="utf-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width,initial-scale=1"><!-- bootstrap --><!-- Latest compiled and minified CSS
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+
+	<!-- Optional theme
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">
+
+  <!-- Material Design fonts --><link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700"><link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons"><!-- Bootstrap Material Design --><link rel="stylesheet" href="https://cdn.rawgit.com/FezVrasta/bootstrap-material-design/dist/dist/bootstrap-material-design.min.css"><script defer="defer" src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script><script defer="defer" src="https://cdn.rawgit.com/HubSpot/tether/v1.3.4/dist/js/tether.min.js"></script><script defer="defer" src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-material-design/4.0.2/bootstrap-material-design.iife.js"></script><!-- IE10 viewport hack for Surface/desktop Windows 8 bug --><script src="https://maxcdn.bootstrapcdn.com/js/ie10-viewport-bug-workaround.js"></script><!-- Latest compiled and minified JavaScript --><!--<script defer src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+
+	<!-- knockout --><script defer="defer" src="https://cdnjs.cloudflare.com/ajax/libs/knockout/3.4.1/knockout-min.js"></script><!--<script defer src="/js/sly.min.js"></script>--><script defer="defer" src="https://js.api.here.com/v3/3.0/mapsjs-core.js" type="text/javascript" charset="utf-8"></script><script defer="defer" src="https://js.api.here.com/v3/3.0/mapsjs-service.js" type="text/javascript" charset="utf-8"></script><script defer="defer" src="https://js.api.here.com/v3/3.0/mapsjs-places.js" type="text/javascript" charset="utf-8"></script><script defer="defer" src="./js/knockout-postbox.js"></script><script defer="defer" src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAkBimU8B-j_LerRypWOC9C7PYf-5XK0AY&libraries=places" onerror="alert('could not load gmaps api')"></script><script defer="defer" src="./js/config/global.js"></script><script defer="defer" src="./js/models/location.js"></script><script defer="defer" src="./js/models/marker.js"></script><script defer="defer" src="./js/models/infoWindow.js"></script><script defer="defer" src="./js/models/place.js"></script><script defer="defer" src="./js/viewmodels/list.js"></script><script defer="defer" src="./js/viewmodels/map.js"></script><script defer="defer" src="./js/viewmodels/nav.js"></script><script defer="defer" src="/js/app.js"></script><style>#mapWrapper {
 	  	padding: 0;
 	  }
 
@@ -7,6 +15,7 @@
         height: 500px;
         position: relative;
         background-color: grey;
+        overflow: visible !important;
       }
 
       #list li:hover {
@@ -34,4 +43,50 @@
 
       #recenterMapButton {
       	color: green;
-      }</style></head><body><nav class="navbar navbar-default" id="nav"><div class="container-fluid"><!-- Brand and toggle get grouped for better mobile display --><div class="navbar-header"><button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false"><span class="sr-only">Toggle navigation</span> <span class="icon-bar"></span> <span class="icon-bar"></span> <span class="icon-bar"></span></button> <a class="navbar-brand" href="#"><span id="recenterMapButton" class="glyphicon glyphicon-screenshot" data-bind="click: recenterMap" title="Recenter Map"></span> </a><a class="navbar-brand" href="#"><span data-bind="text: location().name || 'City'"></span> | <span data-bind="text: filter"></span></a></div><!-- Collect the nav links, forms, and other content for toggling --><div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1"><ul class="nav navbar-nav"><li class="dropdown" params="places: places, filter: filter"><a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"><span data-bind="text: location().name || 'Change City'"></span> <span class="caret"></span></a><ul class="dropdown-menu" data-bind="foreach: locations"><li><a href="#" data-bind="text: name, click: $root.onCitySelection"></a></li></ul></li><li class="dropdown"><a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"><span data-bind="text: filter">Change Place Type</span> <span class="caret"></span></a><ul class="dropdown-menu" data-bind="foreach: categories"><li><a href="#" data-bind="text: $data, click: $root.onFilterSelection"></a></li></ul></li></ul></div><!-- /.navbar-collapse --></div><!-- /.container-fluid --></nav><div id="page-content" class="container-fluid"><div class="row"><div id="listWrapper" class="col-xs-2 col-sm-2 col-md-2 col-lg-2"><ul id="list" data-bind="foreach: places"><li title="Click to display additional information" data-bind="event: { mouseover: $root.onMouseoverListItem, mouseout: $root.onMouseoutListItem, click: $root.onClickListItem }, text: name"></li></ul></div><div id="mapWrapper" class="col-xs-10 col-sm-10 col-md-10 col-lg-10"><div class="container" id="map"></div></div></div></div><!--<footer></footer>--></body></html>
+        cursor: pointer;
+      }</style></head><body><!--<nav class="navbar navbar-default" id="nav">
+  <div class="container-fluid">
+    <!-- Brand and toggle get grouped for better mobile display --
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="#">
+      	<span id="recenterMapButton" class="glyphicon glyphicon-screenshot" data-bind="click: recenterMap" title="Recenter Map"></span>
+      </a>
+      <a class="navbar-brand" href="#">
+      	<span data-bind="text: location().name || 'City'"></span> | <span data-bind="text: filter"></span>
+      </a>
+    </div>
+
+    <!-- Collect the nav links, forms, and other content for toggling --
+    <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+      <ul class="nav navbar-nav">
+        <li class="dropdown" params="places: places, filter: filter">
+          <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+          	<span data-bind="text: location().name || 'Change City'"></span> <span class="caret"></span>
+          </a>
+          <ul class="dropdown-menu" data-bind="foreach: locations">
+            <li><a href="#" data-bind="text: name, click: $root.onCitySelection"></a></li>
+          </ul>
+        </li>
+        <li class="dropdown">
+          <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+          	<span data-bind="text: filter">Change Place Type</span> <span class="caret"></span>
+          </a>
+	      <ul class="dropdown-menu" data-bind="foreach: categories">
+		    <li>
+		   	  <a href="#" data-bind="text: $data, click: $root.onFilterSelection"></a>
+		    </li>
+	      </ul>
+        </li>
+      </ul>
+
+    </div><!-- /.navbar-collapse --
+  </div><!-- /.container-fluid --
+</nav>--><div class="bmd-layout-container bmd-drawer-f-l"><header class="bmd-layout-header"><div class="navbar navbar-light bg-faded"><button class="navbar-toggler" type="button" data-toggle="drawer" data-target="#dw-s1"><span class="sr-only">Toggle drawer</span> <i class="material-icons">menu</i></button><ul class="nav navbar-nav navBind"><i id="recenterMapButton" class="material-icons" data-bind="click: recenterMap" title="Recenter Map">center_focus_strong</i><li class="nav-item"><span data-bind="text: location().name || 'City'"></span> | <span data-bind="text: filter"></span></li></ul></div></header><div id="dw-s1" class="bmd-layout-drawer bg-faded"><ul class="list-group"><li class="list-group-item"><div class="btn-group open navBind"><button class="btn dropdown-toggle" type="button" id="buttonMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" data-bind="text: location().name || 'Change City'"></button><div class="dropdown-menu" aria-labelledby="buttonMenu1" data-bind="foreach: locations"><a class="dropdown-item" href="#" data-bind="text: name, click: $root.onCitySelection"></a></div><button class="btn dropdown-toggle" type="button" id="buttonMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" data-bind="text: filter || 'Change Filter'"></button><div class="dropdown-menu" aria-labelledby="buttonMenu1" data-bind="foreach: categories"><a class="dropdown-item" href="#" data-bind="text: $data, click: $root.onFilterSelection"></a></div></div></li></ul><ul id="list" class="list-group" data-bind="foreach: filtered"><li class="list-group-item" title="Click to display additional information" data-bind="event: { mouseover: $root.onMouseoverListItem, mouseout: $root.onMouseoutListItem, click: $root.onClickListItem }, text: name"></li></ul></div><main class="bmd-layout-content"><div id="mapWrapper" class="col-xs-12 col-sm-12 col-md-12 col-lg-12"><div class="container" id="map"></div></div></main></div><!--<div id="page-content" class="container-fluid">
+
+	</div>--><!--<footer></footer>--></body></html>

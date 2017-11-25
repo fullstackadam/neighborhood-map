@@ -1,2 +1,2 @@
 
-const NAV=new Nav();const LIST=new List();const MAP=new Map();ko.applyBindings(NAV,document.getElementById('nav'));ko.applyBindings(LIST,document.getElementById('list'));ko.applyBindings(MAP,document.getElementById('map'));
+const NAV=new Nav();const LIST=new List();const MAP=new Map();$(".navBind").each(function(){ko.applyBindings(NAV,this);});ko.applyBindings(LIST,document.getElementById('list'));ko.applyBindings(MAP,document.getElementById('map'));$('body').bootstrapMaterialDesign();
