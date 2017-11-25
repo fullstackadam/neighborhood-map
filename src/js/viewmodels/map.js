@@ -1,6 +1,8 @@
 function Map() {
   const SELF = this;
 
+  SELF.loadingState = ko.observable().syncWith('loadingState', true);
+
   SELF.location = ko.observable().subscribeTo('currentLocation', true);
 
   SELF.places = ko.observableArray().subscribeTo('places', true);
@@ -9,6 +11,7 @@ function Map() {
 
   SELF.triggerCenter = ko.observable(false).syncWith('centerMap');
 
+  // queue for marker method calls from other models
   SELF.markerActionQueue = ko.observableArray().syncWith('markerActionQueue', true);
 
   SELF.markerActionQueue.subscribe(function(value) {
@@ -22,6 +25,7 @@ function Map() {
     }
   });
 
+  // center map based on current location
   SELF.center = function() {
     window.map.setCenter({
       lat: SELF.location().position.lat,
@@ -29,14 +33,18 @@ function Map() {
     });
   };
 
+  // store old markers here for proper deletion
   SELF.oldMarkers = [];
 
+  // remove old markers from map
   SELF.deleteOldMarkers = function() {
     SELF.oldMarkers.forEach(function(marker) {
       marker.setMap(null);
     });
   };
 
+  // create markers based on filtered places
+  // store in observable array for easy access
   SELF.markers = ko.computed(function() {
     let markers = [],
         marker;
@@ -57,9 +65,10 @@ function Map() {
 
   SELF.render = ko.observable().syncWith('renderMap', true);
 
+  // render map when observable updated
   SELF.render.subscribe(function(value) {
     if (window.map === null && value) {
-      console.log('render map');
+      SELF.loadingState('rendering map...');
 
       window.map = new google.maps.Map(document.getElementById('map'), {
         center: {
@@ -70,9 +79,19 @@ function Map() {
         zoom: 14,
         rotateControl: true,
       });
+
+      // google maps calls this function on auth failure
+      window.gm_authFailure = function() { 
+        SELF.loadingState('ERROR: failed to load google maps!');
+      };
+
+      window.map.addListener('center_changed', function() {
+        SELF.loadingState('Map rendered');
+      });
     }
   });
 
+  // center map when synced observable is updated
   SELF.triggerCenter.subscribe(function(value) {
     if (window.map !== null && value) {
       SELF.center();
@@ -80,6 +99,7 @@ function Map() {
     }
   });
 
+  // resize map on resize event for testing and overriding google maps js
   window.addEventListener('resize', function () {
     $('#map').height(window.innerHeight - 50);
   });

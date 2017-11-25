@@ -1,6 +1,8 @@
 function List() {
   const SELF = this;
   
+  SELF.loadingState = ko.observable().syncWith('loadingState', true);
+
   SELF.places = ko.observableArray();
 
   SELF.markerActionQueue = ko.observableArray().syncWith('markerActionQueue');
@@ -20,10 +22,6 @@ function List() {
       if (place.category === CATEGORY_FILTER || CATEGORY_FILTER === 'all') {
         keep = true;
       }
-
-      /*if (place.marker !== undefined) {
-        place.marker.setVisible(keep);
-      }*/
 
       return keep;
     });
@@ -74,7 +72,7 @@ function List() {
   }
 
   SELF.import = function(lat, lng, callback) {
-    //VM.firstRun = false;
+    SELF.loadingState('getting places from HERE api...');
 
     const platform = new H.service.Platform({
       app_id: 'JaSjic2QLCII4hn6wa2V',
@@ -109,6 +107,8 @@ function List() {
     // Define a callback function to handle errors:
     function onError(data) {
       error = data;
+
+      SELF.loadingState('ERROR: could not load places from HERE api!');
     }
 
     // Run a search request

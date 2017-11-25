@@ -7,6 +7,26 @@ function Nav() {
 
   SELF.locations = ko.observableArray();
 
+  SELF.loadingState = ko.observable('Loading...').syncWith('loadingState');
+
+  SELF.loadStateTimeout = null;
+
+  // if error found stop accepting load state messages from other view models
+  SELF.loadingState.subscribe(function(msg) {
+    // make sure time outs don't bubble up
+    clearTimeout(SELF.loadStateTimeout);
+
+    if (msg.match(/error/i) !== null) {
+      SELF.loadingState.stopSyncingWith('loadingState');
+
+      // return immediately so error doesn't get cleared
+      return;
+    }
+
+    // clears load state message after 2 seconds
+    SELF.loadStateTimeout = setTimeout(function() { SELF.loadingState(''); }, 2000);
+  });
+
   SELF.filter = ko.observable().syncWith('filter', true);
   SELF.categories = ko.observableArray().subscribeTo('categories', true);
 
@@ -40,6 +60,8 @@ function Nav() {
   };
 
   SELF.getCityFromLatLng = function(position) {
+    SELF.loadingState('getting your municipality from gps coordinates...');
+
     const geocoder = new google.maps.Geocoder;
 
     const latlng = {
@@ -48,7 +70,13 @@ function Nav() {
     };
 
     geocoder.geocode({ 'location': latlng }, function(results, status) {
-
+      if (status !== 'OK') {
+        // acceptable failure
+        SELF.loadingState('could not get municipality from gps coordinates');
+        SELF.renderMap(true);
+        
+        return;
+      }
       results = results[0].address_components;
       let types = [];
       let city = false;
@@ -80,15 +108,17 @@ function Nav() {
     });
   };
 
+  // attempt to get user location before rendering map
   if (navigator.geolocation) {
     navigator.geolocation.getCurrentPosition(
       SELF.getCityFromLatLng
     );
   } else {
+    SELF.loadingState('rendering map...');
     SELF.renderMap(true);
   }
 
-  SELF.current = ko.observable(SELF.locations()[2]).syncWith('currentLocation');
+  SELF.current = ko.observable().syncWith('currentLocation');
 
   // set up default locations
   if (window.locations && window.defaultLocations !== 0) {
