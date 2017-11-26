@@ -63,7 +63,7 @@ function Map() {
     return markers;
   }, SELF);
 
-  SELF.render = ko.observable().syncWith('renderMap', true);
+  SELF.render = ko.observable().syncWith('loadMap', true);
 
   // render map when observable updated
   SELF.render.subscribe(function(value) {

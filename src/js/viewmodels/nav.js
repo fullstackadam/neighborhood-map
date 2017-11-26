@@ -1,7 +1,7 @@
 function Nav() {
   const SELF = this;
 
-  SELF.renderMap = ko.observable(false).syncWith('renderMap');
+  SELF.loadMap = ko.observable(false).syncWith('loadMap');
 
   SELF.location = ko.observable().syncWith('currentLocation', true); 
 
@@ -73,8 +73,8 @@ function Nav() {
       if (status !== 'OK') {
         // acceptable failure
         SELF.loadingState('could not get municipality from gps coordinates');
-        SELF.renderMap(true);
-        
+        SELF.loadMap(true);
+
         return;
       }
       results = results[0].address_components;
@@ -102,23 +102,21 @@ function Nav() {
       SELF.add(name, latlng);
 
       // make first location current location
-      SELF.current(SELF.locations()[0]);
+      SELF.location(SELF.locations()[0]);
 
-      SELF.renderMap(true);
+      SELF.loadMap(true);
     });
   };
 
   // attempt to get user location before rendering map
   if (navigator.geolocation) {
     navigator.geolocation.getCurrentPosition(
-      SELF.getCityFromLatLng
+      SELF.getCityFromLatLng,
+      function() { SELF.loadMap(true); }
     );
   } else {
-    SELF.loadingState('rendering map...');
-    SELF.renderMap(true);
+    SELF.loadMap(true);
   }
-
-  SELF.current = ko.observable().syncWith('currentLocation');
 
   // set up default locations
   if (window.locations && window.defaultLocations !== 0) {
@@ -130,7 +128,7 @@ function Nav() {
       if (location.default && location.default === true) {
         let lastIndex = SELF.locations().length - 1;
 
-        SELF.current(SELF.locations()[lastIndex]);
+        SELF.location(SELF.locations()[lastIndex]);
       }
     });
   }

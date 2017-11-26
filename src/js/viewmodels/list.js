@@ -71,7 +71,7 @@ function List() {
     SELF.markerActionQueue.push(action);
   }
 
-  SELF.import = function(lat, lng, callback) {
+  SELF.loadPlaces = function(callback) {
     SELF.loadingState('getting places from HERE api...');
 
     const platform = new H.service.Platform({
@@ -83,6 +83,9 @@ function List() {
     let search = new H.places.Explore(platform.getPlacesService());
     let searchResult;
     let error;
+
+    const lat = SELF.location().position.lat;
+    const lng = SELF.location().position.lng;
 
     // Define search parameters:
     const PARAMS = {
@@ -117,10 +120,11 @@ function List() {
 
   // get new places when location changes
   SELF.location.subscribe(function(location) {
-    SELF.import(
-      SELF.location().position.lat, 
-      SELF.location().position.lng,
-      function() { while(1) {if (window.map) SELF.centerMap(true); break;} } // run in loop till map rendered then center map
-    );
+    SELF.loadPlaces();
   });
+
+  // initial load
+  SELF.loadPlaces(
+    function() { while(1) {if (window.map) SELF.centerMap(true); break;} } // run in loop till map rendered then center map
+  );
 }
