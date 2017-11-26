@@ -5,6 +5,11 @@ function Map() {
 
   SELF.location = ko.observable().subscribeTo('currentLocation', true);
 
+  // center map on new location when location updates
+  SELF.location.subscribe(function() {
+    SELF.center();
+  });
+
   SELF.places = ko.observableArray().subscribeTo('places', true);
 
   SELF.infoWindows = ko.observableArray();

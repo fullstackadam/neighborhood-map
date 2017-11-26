@@ -3,7 +3,7 @@ function Nav() {
 
   SELF.loadMap = ko.observable(false).syncWith('loadMap');
 
-  SELF.location = ko.observable().syncWith('currentLocation', true); 
+  SELF.location = ko.observable().syncWith('currentLocation'); 
 
   SELF.locations = ko.observableArray();
 
