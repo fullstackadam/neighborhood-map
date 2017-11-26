@@ -76,10 +76,9 @@ Marker.prototype.openInfoWindow = function() {
 
 // close infowindow and unhighlight marker
 Marker.prototype.closeInfoWindow = function() {
-  if (this.infoWindow === null || !this.infoWindow.opened) {
-    return;
-  }
-
-  this.infoWindow.close();
   this.unhighlight();
+
+  if (this.infoWindow !== null && this.infoWindow.opened) {
+    this.infoWindow.close();
+  }
 };

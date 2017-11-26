@@ -51,7 +51,7 @@ function List() {
   SELF.onMouseoutListItem = function(place) {
     SELF.newMarkerAction(
       place.markerId,
-      'unhighlight'
+      'closeInfoWindow'
     );
   };
 
