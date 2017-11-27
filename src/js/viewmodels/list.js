@@ -1,4 +1,4 @@
-function List() {
+function ListVM() {
   const SELF = this;
 
   SELF.loadingState = ko.observable().syncWith('loadingState', true);

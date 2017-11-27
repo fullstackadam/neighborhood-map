@@ -1,4 +1,4 @@
-function Nav() {
+function NavVM() {
   const SELF = this;
 
   SELF.loadMap = ko.observable(false).syncWith('loadMap');

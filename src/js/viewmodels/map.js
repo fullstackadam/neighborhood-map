@@ -1,5 +1,28 @@
-function Map() {
+function MapVM() {
   const SELF = this;
+
+  SELF.googleMapsLoaded = ko.observable(false);
+
+  SELF.createMap = function() {
+    // so create map isn't called twice
+    window.map = true;
+    
+    SELF.loadingState('rendering map...');
+
+    window.map = new google.maps.Map(document.getElementById('map'), {
+      center: {
+        lat: SELF.location().position.lat,
+        lng: SELF.location().position.lng,
+      },
+      scrollbar: false,
+      zoom: 14,
+      rotateControl: true,
+    });
+
+    window.map.addListener('center_changed', function() {
+      SELF.loadingState('Map rendered');
+    });
+  };
 
   SELF.loadingState = ko.observable().syncWith('loadingState', true);
 
@@ -70,29 +93,17 @@ function Map() {
 
   SELF.render = ko.observable().syncWith('loadMap', true);
 
-  // render map when observable updated
+  // attempt to render map after default location set
   SELF.render.subscribe(function(value) {
-    if (window.map === null && value) {
-      SELF.loadingState('rendering map...');
+    if (window.map === null && value && SELF.googleMapsLoaded()) {
+      SELF.createMap();
+    }
+  });
 
-      window.map = new google.maps.Map(document.getElementById('map'), {
-        center: {
-          lat: SELF.location().position.lat,
-          lng: SELF.location().position.lng,
-        },
-        scrollbar: false,
-        zoom: 14,
-        rotateControl: true,
-      });
-
-      // google maps calls this function on auth failure
-      window.gm_authFailure = function() { 
-        SELF.loadingState('ERROR: failed to load google maps!');
-      };
-
-      window.map.addListener('center_changed', function() {
-        SELF.loadingState('Map rendered');
-      });
+  // attempt to render map after google maps api loaded
+  SELF.googleMapsLoaded.subscribe(function(value) {
+    if (window.map === null && value && SELF.render()) {
+      SELF.createMap();
     }
   });
 

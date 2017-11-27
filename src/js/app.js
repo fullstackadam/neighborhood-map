@@ -2,9 +2,19 @@
 // https://github.com/paulmillr/es6-shim
 
 // for testing
-const NAV = new Nav();
-const LIST = new List();
-const MAP = new Map();
+const NAV = new NavVM();
+const LIST = new ListVM();
+const MAP = new MapVM();
+
+// fix for google maps call backs
+
+function googleSuccess() {
+  MAP.googleMapsLoaded(true);
+}
+
+function googleError() {
+  MAP.loadingState('ERROR: could not load gmaps api');
+}
 
 // https://stackoverflow.com/questions/8662743/can-i-applybindings-to-more-than-one-dom-element-using-knockout
 $(".navBind").each(function() {
