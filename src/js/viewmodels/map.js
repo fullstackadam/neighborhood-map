@@ -49,7 +49,7 @@ function MapVM() {
 
       SELF.markers()[action.id][action['action']]();
 
-      console.log('marker: ' + action.id + ' action: ' + action.action);
+      //console.log('marker: ' + action.id + ' action: ' + action.action);
     }
   });
 

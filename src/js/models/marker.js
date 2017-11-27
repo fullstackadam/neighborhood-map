@@ -31,6 +31,13 @@ function Marker(map, place) {
 
   this.addListener('click', function() {
     this.openInfoWindow();
+    
+    const self = this;
+
+    setTimeout(
+      function() { self.setAnimation(null) },
+      700
+    );
   });
 }
 
