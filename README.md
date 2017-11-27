@@ -1,5 +1,5 @@
 # Vicinity Map
-This is a front-end app built using [knockout.js](http://knockoutjs.com/), [knockout postbox](https://github.com/rniemeyer/knockout-postbox), 
+This is a SPA built using [knockout.js](http://knockoutjs.com/), [knockout postbox](https://github.com/rniemeyer/knockout-postbox), 
 [Google Maps API](https://developers.google.com/maps/) and the [HERE places API](https://developer.here.com/documentation/places).
 
 ![alt text](https://raw.githubusercontent.com/fullstackadam/vicinity-map/master/screenshot.png)
