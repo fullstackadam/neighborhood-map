@@ -71,6 +71,14 @@ function ListVM() {
     SELF.markerActionQueue.push(action);
   }
 
+  SELF.initialLoadPlaces = ko.observable(false).syncWith('initialLoadPlaces');
+
+  SELF.initialLoadPlaces.subscribe(function() {
+    SELF.loadPlaces(
+      function() { SELF.centerMap(true) }
+    );
+  });
+
   SELF.loadPlaces = function(callback) {
     SELF.loadingState('getting places from HERE api...');
 
@@ -113,9 +121,4 @@ function ListVM() {
   SELF.location.subscribe(function(location) {
     SELF.loadPlaces();
   });
-
-  // initial load
-  SELF.loadPlaces(
-    function() { while(1) {if (window.map) SELF.centerMap(true); break;} } // run in loop till map rendered then center map
-  );
 }

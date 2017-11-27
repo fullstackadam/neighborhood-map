@@ -3,6 +3,8 @@ function MapVM() {
 
   SELF.googleMapsLoaded = ko.observable(false);
 
+  SELF.initialLoadPlaces = ko.observable().syncWith('initialLoadPlaces', true);
+
   SELF.createMap = function() {
     // so create map isn't called twice
     window.map = true;
@@ -19,9 +21,18 @@ function MapVM() {
       rotateControl: true,
     });
 
-    window.map.addListener('center_changed', function() {
-      SELF.loadingState('Map rendered');
-    });
+    // fires after map renders
+    mapRenderedListener = window.map.addListener(
+      'idle',
+      function() {
+        SELF.loadingState('Map rendered');
+
+        // trigger initial place data download after map renders
+        SELF.initialLoadPlaces(true);
+
+        mapRenderedListener.remove();
+      }
+    );
   };
 
   SELF.loadingState = ko.observable().syncWith('loadingState', true);
@@ -30,7 +41,9 @@ function MapVM() {
 
   // center map on new location when location updates
   SELF.location.subscribe(function() {
-    SELF.center();
+    if (window.map !== null && typeof window.map === 'object') {
+      SELF.center();
+    }
   });
 
   SELF.places = ko.observableArray().subscribeTo('places', true);
