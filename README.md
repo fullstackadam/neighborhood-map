@@ -2,7 +2,7 @@
 This is a front-end app built using [knockout.js](http://knockoutjs.com/), [knockout postbox](https://github.com/rniemeyer/knockout-postbox), 
 [Google Maps API](https://developers.google.com/maps/) and the [HERE places API](https://developer.here.com/documentation/places).
 
-![alt text]: https://raw.githubusercontent.com/fullstackadam/vicinity-map/master/screenshot.png
+![alt text](https://raw.githubusercontent.com/fullstackadam/vicinity-map/master/screenshot.png)
 
 It loads data from HERE and Google Maps 
 to display hours and location information for places of interest 
