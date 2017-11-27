@@ -7,7 +7,6 @@ const LIST = new ListVM();
 const MAP = new MapVM();
 
 // fix for google maps call backs
-
 function googleSuccess() {
   MAP.googleMapsLoaded(true);
 }
