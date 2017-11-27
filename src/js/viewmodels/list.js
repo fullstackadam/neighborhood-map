@@ -74,26 +74,22 @@ function ListVM() {
   SELF.loadPlaces = function(callback) {
     SELF.loadingState('getting places from HERE api...');
 
-    const platform = new H.service.Platform({
-      app_id: 'JaSjic2QLCII4hn6wa2V',
-      app_code: '-9DtJ2wENRacgkqeW0haBg',
-    });
+    const endpoint = 'https://places.demo.api.here.com/places/v1/discover/explore';
 
-    // Obtain an Explore object through which to submit search
-    let search = new H.places.Explore(platform.getPlacesService());
-    let searchResult;
-    let error;
+    const app_id = window.here.app_id;
+    const app_code = window.here.app_code;
+    const auth = '&app_id=' + app_id + '&app_code=' + app_code;
 
     const lat = SELF.location().position.lat;
     const lng = SELF.location().position.lng;
+    const latlng = 'at=' + lat + '%2C' + lng;
 
-    // Define search parameters:
-    const PARAMS = {
-      at: lat + ',' + lng,
-    };
+    const URL = endpoint + '?' + latlng + auth;
 
-    // Define a callback function to handle data on success:
-    function onResult(data) {
+    $.get({
+      url: URL
+    })
+    .done(function(data) {
       // delete current places
       SELF.places([]);
 
@@ -105,17 +101,12 @@ function ListVM() {
       if (callback !== undefined) {
         callback();
       }
-    }
-
-    // Define a callback function to handle errors:
-    function onError(data) {
+    })
+    .fail(function(data) {
       const error = data;
 
       SELF.loadingState('ERROR: could not load places from HERE api!');
-    }
-
-    // Run a search request
-    search.request(PARAMS, {}, onResult, onError);
+    });
   };
 
   // get new places when location changes

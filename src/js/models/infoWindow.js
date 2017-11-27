@@ -36,6 +36,7 @@ InfoWindow.prototype.html = function(name, address, hours) {
   return HTML;
 };
 
+
 // open infowindow and save state
 InfoWindow.prototype.open = function() {
   google.maps.InfoWindow.prototype.open.call(

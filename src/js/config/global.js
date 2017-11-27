@@ -1,5 +1,10 @@
 window.map = null;
 
+window.here = {
+  app_id: 'JaSjic2QLCII4hn6wa2V',
+  app_code: '-9DtJ2wENRacgkqeW0haBg',
+};
+
 window.locations = [{
   name: 'New York, NY',
   position: {
